@@ -97,12 +97,12 @@ public struct ObjectState
 {
     public Vector3 position;
     public Quaternion rotation;
-    public Dictionary<string, string> comments;
+    public List<Comment> comments;
     public float rating; // 0.0 - 5.0
     public bool isRated;
     public Certainty degreeOfCertainty;
 
-    public static ObjectState GenerateObjectState(Vector3 pos, Quaternion rot, Dictionary<string, string> comms = null, float rate = 0, bool rated = false)
+    public static ObjectState GenerateObjectState(Vector3 pos, Quaternion rot, List<Comment> comms = null, float rate = 0, bool rated = false, Certainty certainty = Certainty.None)
     {
         ObjectState objState = new ObjectState();
         objState.position = pos;
@@ -110,6 +110,19 @@ public struct ObjectState
         objState.comments = comms;
         objState.rating = rate;
         objState.isRated = rated;
+        objState.degreeOfCertainty = certainty;
+        return objState;
+    }
+
+    public static ObjectState CloneObjectState(ObjectState objectState)
+    {
+        ObjectState objState = new ObjectState();
+        objState.position = objectState.position;
+        objState.rotation = objectState.rotation;
+        objState.comments = objectState.comments;
+        objState.rating = objectState.rating;
+        objState.isRated = objectState.isRated;
+        objState.degreeOfCertainty = objectState.degreeOfCertainty;
         return objState;
     }
 }
@@ -121,4 +134,11 @@ public enum Certainty
     Low,
     Medium,
     High,
+}
+
+[System.Serializable]
+public struct Comment
+{
+    public string commenter;
+    public string comment;
 }
