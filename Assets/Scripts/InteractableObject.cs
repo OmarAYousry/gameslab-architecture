@@ -20,6 +20,8 @@ public class InteractableObject : MonoBehaviour
         get { return states[currentStateID]; }
     }
 
+    ObjectState tempState;
+
     void Awake()
     {
         if (states == null)
@@ -29,6 +31,8 @@ public class InteractableObject : MonoBehaviour
             states.Add(objState);
             currentStateID = 0;
         }
+
+        ResetState();
 
         if (autoSetTag)
             transform.tag = tagName;
@@ -51,12 +55,25 @@ public class InteractableObject : MonoBehaviour
         interactables.Remove(this);
     }
 
-    public void UpdateState()
+    public void ResetState()
     {
-        transform.position = currentState.position;
-        transform.rotation = currentState.rotation;
+        tempState = currentState;
+        UpdateState();
     }
 
+    public void UpdateState()
+    {
+        transform.position = tempState.position;
+        transform.rotation = tempState.rotation;
+        //tempState = ObjectState.GenerateObjectState(currentState.position, currentState.rotation, currentState.comments, currentState.rating, currentState.isRated, currentState.degreeOfCertainty);
+    }
+
+    public void UpdateUI()
+    {
+        // TODO
+    }
+
+    #region interactions
     public void SelectObject()
     {
         Color color = new Color(Color.yellow.r, Color.yellow.g, Color.yellow.b, GetComponent<MeshRenderer>().material.color.a);
@@ -84,12 +101,76 @@ public class InteractableObject : MonoBehaviour
         {
             obj.UnselectObject();
         }
-
-        SelectedObjectUI.HideSelectedObjectUI();
-
         SelectObject();
-        SelectedObjectUI.DisplaySelectedObjectUI(currentState);
     }
+    #endregion
+
+    #region back-end actions
+    public void SetPosition(Vector3 newPos)
+    {
+        tempState.position = newPos;
+        UpdateState();
+    }
+
+    public void SetRotation(Quaternion newRot)
+    {
+        tempState.rotation = newRot;
+        UpdateState();
+    }
+
+    public void AddComment(string commenter, string comment)
+    {
+        Comment newComment = new Comment();
+        newComment.commenter = commenter;
+        newComment.comment = comment;
+
+        tempState.comments.Add(newComment);
+    }
+
+    public void RemoveComment(int commentIndex)
+    {
+        tempState.comments.RemoveAt(commentIndex);
+    }
+
+    public void SetRatiing(float rating)
+    {
+        tempState.isRated = true;
+        tempState.rating = rating;
+    }
+
+    public void SetCertainty(Certainty certainty)
+    {
+        tempState.degreeOfCertainty = certainty;
+    }
+
+    public void SaveTempToCurrentState()
+    {
+        states[currentStateID] = tempState;
+        ResetState();
+    }
+
+    public void SaveTempToNewState()
+    {
+        ObjectState newObjectState = ObjectState.CloneObjectState(tempState);
+        states.Add(newObjectState);
+        currentStateID = states.IndexOf(newObjectState);
+        ResetState();
+    }
+
+    public void RemoveState()
+    {
+        if (states.Count > 1)
+        {
+            states.RemoveAt(currentStateID);
+            currentStateID = 0;
+            ResetState();
+        }
+        else
+        {
+            throw new System.Exception("[InteractableObject] Trying to delete the only state that exists.");
+        }
+    }
+    #endregion
 }
 
 [System.Serializable]
