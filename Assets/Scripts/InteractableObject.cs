@@ -85,7 +85,10 @@ public class InteractableObject : MonoBehaviour
             obj.UnselectObject();
         }
 
+        SelectedObjectUI.HideSelectedObjectUI();
+
         SelectObject();
+        SelectedObjectUI.DisplaySelectedObjectUI(currentState);
     }
 }
 
