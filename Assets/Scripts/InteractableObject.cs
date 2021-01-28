@@ -92,6 +92,7 @@ public class InteractableObject : MonoBehaviour
     }
 }
 
+[System.Serializable]
 public struct ObjectState
 {
     public Vector3 position;
@@ -110,4 +111,13 @@ public struct ObjectState
         objState.isRated = rated;
         return objState;
     }
+}
+
+[System.Serializable]
+public enum Certainity
+{
+    None,
+    Low,
+    Medium,
+    High,
 }
