@@ -17,6 +17,8 @@ public class PlaceOnPlane : MonoBehaviour
     [Tooltip("Instantiates this prefab on a plane at the touch location.")]
     GameObject m_PlacedPrefab;
 
+    bool m_spawned = false;
+
     /// <summary>
     /// The prefab to instantiate on touch.
     /// </summary>
@@ -72,10 +74,10 @@ public class PlaceOnPlane : MonoBehaviour
             {
                 spawnedObject = Instantiate(m_PlacedPrefab, hitPose.position, hitPose.rotation);
             }
-            else
-            {
-                spawnedObject.transform.position = hitPose.position;
-            }
+            //else
+            //{
+            //    spawnedObject.transform.position = hitPose.position;
+            //}
         }
     }
 
