@@ -100,6 +100,7 @@ public struct ObjectState
     public Dictionary<string, string> comments;
     public float rating; // 0.0 - 5.0
     public bool isRated;
+    public Certainty degreeOfCertainty;
 
     public static ObjectState GenerateObjectState(Vector3 pos, Quaternion rot, Dictionary<string, string> comms = null, float rate = 0, bool rated = false)
     {
@@ -114,7 +115,7 @@ public struct ObjectState
 }
 
 [System.Serializable]
-public enum Certainity
+public enum Certainty
 {
     None,
     Low,
