@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(MovementControl))]
 public class InteractableObject : MonoBehaviour
 {
     public static List<InteractableObject> interactables = new List<InteractableObject>();
@@ -14,7 +15,7 @@ public class InteractableObject : MonoBehaviour
     
     Color originalColor;
     List<Color> originalChildrenColors;
-
+    MovementControl movement;
     public List<ObjectState> States
     {
         get { return states; }
@@ -44,6 +45,8 @@ public class InteractableObject : MonoBehaviour
 
         if (autoSetTag)
             transform.tag = tagName;
+
+        movement = GetComponent<MovementControl>();
     }
 
     void Start()
@@ -75,7 +78,6 @@ public class InteractableObject : MonoBehaviour
     {
         transform.localPosition = CurrentState.position;
         transform.localRotation = CurrentState.rotation;
-        //tempState = ObjectState.GenerateObjectState(currentState.position, currentState.rotation, currentState.comments, currentState.rating, currentState.isRated, currentState.degreeOfCertainty);
     }
 
     public void UpdateUI()
@@ -216,6 +218,26 @@ public class InteractableObject : MonoBehaviour
         {
             Debug.LogWarning("[InteractableObject] Can not delete the only state that exists.");
         }
+    }
+
+    public void EnableMovement()
+    {
+        movement.enabled = true;
+    }
+
+    public void DisableMovementAndCancel()
+    {
+        movement.enabled = false;
+        ResetState();
+        UpdateUI();
+    }
+
+    public void DisableMovementAndSave()
+    {
+        movement.enabled = false;
+        SetPosition(transform.localPosition);
+        SetRotation(transform.localRotation);
+        UpdateUI();
     }
     #endregion
 
