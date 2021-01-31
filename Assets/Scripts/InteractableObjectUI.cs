@@ -11,9 +11,13 @@ public class InteractableObjectUI : MonoBehaviour
 
     [Header("References:")]
     [SerializeField]
+    GameObject infoView;
+    [SerializeField]
     StatesViewUI statesView;
     [SerializeField]
     CommentsViewUI commentsView;
+    [SerializeField]
+    MovementUI movementView;
     [SerializeField]
     Button closeButton;
 
@@ -28,6 +32,8 @@ public class InteractableObjectUI : MonoBehaviour
     RatingUI ratingView;
 
     [Header("Action Buttons")]
+    [SerializeField]
+    Button movementButton;
     [SerializeField]
     Button createNewState;
     [SerializeField]
@@ -75,24 +81,32 @@ public class InteractableObjectUI : MonoBehaviour
             commentsView.gameObject.SetActive(false);
             cloneToNewState.gameObject.SetActive(false);
             deleteStateButton.gameObject.SetActive(false);
+            movementView.gameObject.SetActive(false);
+            infoView.SetActive(true);
             elementName.text = intObj.name;
             stateNumber.text = "No States";
             return;
         }
 
-
         statesView.gameObject.SetActive(true);
         commentsView.gameObject.SetActive(true);
         cloneToNewState.gameObject.SetActive(true);
         deleteStateButton.gameObject.SetActive(true);
+        infoView.SetActive(true);
+        movementView.gameObject.SetActive(false);
 
         statesView.Visualize(intObj.States, intObj.CurrentStateID, intObj.SetState);
         commentsView.Visualize(intObj.CurrentState.comments, intObj.AddComment, intObj.RemoveComment);
         certaintyView.Visualize(intObj.CurrentState.degreeOfCertainty, intObj.SetCertainty);
         ratingView.Visualize(intObj.CurrentState.rating, intObj.SetRating);
+        movementView.Visualize(intObj.DisableMovementAndSave, intObj.DisableMovementAndCancel);
 
         elementName.text = intObj.name;
         stateNumber.text = "State: " + (intObj.CurrentStateID + 1).ToString();
+
+        movementButton.onClick.RemoveAllListeners();
+        movementButton.onClick.AddListener(intObj.EnableMovement);
+        movementButton.onClick.AddListener(StartMovementMode);
 
         createNewState.onClick.RemoveAllListeners();
         createNewState.onClick.AddListener(intObj.CreateNewState);
@@ -102,5 +116,15 @@ public class InteractableObjectUI : MonoBehaviour
 
         deleteStateButton.onClick.RemoveAllListeners();
         deleteStateButton.onClick.AddListener(intObj.RemoveState);
+    }
+
+    void StartMovementMode()
+    {
+        statesView.gameObject.SetActive(false);
+        commentsView.gameObject.SetActive(false);
+        cloneToNewState.gameObject.SetActive(false);
+        deleteStateButton.gameObject.SetActive(false);
+        infoView.SetActive(false);
+        movementView.gameObject.SetActive(true);
     }
 }
