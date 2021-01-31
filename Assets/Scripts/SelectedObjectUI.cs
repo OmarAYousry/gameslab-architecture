@@ -55,10 +55,10 @@ public class SelectedObjectUI : MonoBehaviour
     {
         CurrentObjectState = selectedObjectState;
 
+        commentsList = new List<string>();
         if (CurrentObjectState.comments != null)
-            commentsList = new List<string>(CurrentObjectState.comments.Values);
-        else
-            commentsList = new List<string>();
+            foreach (Comment comment in CurrentObjectState.comments)
+                commentsList.Add(comment.comment);
 
         commentsIndex = 0;
 
