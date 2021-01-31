@@ -1,0 +1,13 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public static class Global
+{
+    public static MovementPlane MovementPlane;
+
+    public static void RegisterMovementPlane(MovementPlane mp)
+    {
+        MovementPlane = mp;
+    }
+}

@@ -106,6 +106,7 @@ GameObject:
   - component: {fileID: 615231721629025165}
   - component: {fileID: 6799020377093417204}
   - component: {fileID: 8434731820196345592}
+  - component: {fileID: 5419042953858619782}
   m_Layer: 0
   m_Name: Wall North (1)
   m_TagString: Untagged
@@ -143,7 +144,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 563219657576667727}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -201,6 +202,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSetTag: 1
   tagName: Interactable
+--- !u!114 &5419042953858619782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 563219657576667727}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 349c91d6824b5da4d8eb75a6fbf0bed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &694577895730410852
 GameObject:
   m_ObjectHideFlags: 0
@@ -307,6 +320,7 @@ GameObject:
   - component: {fileID: 8773514453236985494}
   - component: {fileID: 7318408282214394726}
   - component: {fileID: 7445323761335685307}
+  - component: {fileID: 9205786303257298987}
   m_Layer: 0
   m_Name: Inner Wall Semi-Seperation (1)
   m_TagString: Interactable
@@ -345,7 +359,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 960429788629062285}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -403,6 +417,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSetTag: 1
   tagName: Interactable
+--- !u!114 &9205786303257298987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960429788629062285}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 349c91d6824b5da4d8eb75a6fbf0bed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1285995015553493214
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,6 +442,7 @@ GameObject:
   - component: {fileID: 7149104652195767257}
   - component: {fileID: 2614367953401307711}
   - component: {fileID: 7626480963762858120}
+  - component: {fileID: 5038334621873265086}
   m_Layer: 0
   m_Name: Wall West (1)
   m_TagString: Untagged
@@ -454,7 +481,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1285995015553493214}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -512,6 +539,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSetTag: 1
   tagName: Interactable
+--- !u!114 &5038334621873265086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1285995015553493214}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 349c91d6824b5da4d8eb75a6fbf0bed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1853791256651224001
 GameObject:
   m_ObjectHideFlags: 0
@@ -712,6 +751,7 @@ GameObject:
   - component: {fileID: 9110763925228410427}
   - component: {fileID: 4460801612891428182}
   - component: {fileID: 1173629732151733652}
+  - component: {fileID: 535265558116294280}
   m_Layer: 0
   m_Name: Inner Wall Elevator North (1)
   m_TagString: Untagged
@@ -752,7 +792,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2510550753392762962}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -810,6 +850,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSetTag: 1
   tagName: Interactable
+--- !u!114 &535265558116294280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2510550753392762962}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 349c91d6824b5da4d8eb75a6fbf0bed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3649510048827993471
 GameObject:
   m_ObjectHideFlags: 0
@@ -910,10 +962,10 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4489301305971324086}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &6423353392142142177
@@ -968,6 +1020,7 @@ GameObject:
   - component: {fileID: 9110967401593670351}
   - component: {fileID: 5311603287832531018}
   - component: {fileID: 2946697114353033656}
+  - component: {fileID: 9094714955461051146}
   m_Layer: 0
   m_Name: Inner Wall Seperation (1)
   m_TagString: Untagged
@@ -1008,7 +1061,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4686994277129729448}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1.5, y: 1, z: 1}
@@ -1066,6 +1119,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSetTag: 1
   tagName: Interactable
+--- !u!114 &9094714955461051146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4686994277129729448}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 349c91d6824b5da4d8eb75a6fbf0bed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4935442545412322903
 GameObject:
   m_ObjectHideFlags: 0
@@ -1172,6 +1237,7 @@ GameObject:
   - component: {fileID: 4888241253471158471}
   - component: {fileID: 3956715755948924302}
   - component: {fileID: 1093977680}
+  - component: {fileID: 6601222524554316212}
   m_Layer: 0
   m_Name: Wall South (1)
   m_TagString: Untagged
@@ -1209,7 +1275,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5207668216799085496}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -1267,6 +1333,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSetTag: 1
   tagName: Interactable
+--- !u!114 &6601222524554316212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5207668216799085496}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 349c91d6824b5da4d8eb75a6fbf0bed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5297311371471940697
 GameObject:
   m_ObjectHideFlags: 0
@@ -1560,6 +1638,7 @@ GameObject:
   - component: {fileID: 6033966172745861037}
   - component: {fileID: 3849902946971169718}
   - component: {fileID: 4744632221271918121}
+  - component: {fileID: 4265667886302644701}
   m_Layer: 0
   m_Name: Wall East (3)
   m_TagString: Untagged
@@ -1599,7 +1678,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7302531167847009561}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1.35, y: 1, z: 1}
@@ -1657,6 +1736,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSetTag: 1
   tagName: Interactable
+--- !u!114 &4265667886302644701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7302531167847009561}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 349c91d6824b5da4d8eb75a6fbf0bed6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8245889694531850046
 GameObject:
   m_ObjectHideFlags: 0
