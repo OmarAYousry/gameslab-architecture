@@ -15,12 +15,20 @@ public class InteractableObject : MonoBehaviour
     Color originalColor;
     List<Color> originalChildrenColors;
 
-    public ObjectState currentState
+    public List<ObjectState> States
+    {
+        get { return states; }
+    }
+
+    public int CurrentStateID
+    {
+        get { return currentStateID; }
+    }
+
+    public ObjectState CurrentState
     {
         get { return states[currentStateID]; }
     }
-
-    ObjectState tempState;
 
     void Awake()
     {
@@ -57,20 +65,19 @@ public class InteractableObject : MonoBehaviour
 
     public void ResetState()
     {
-        tempState = currentState;
-        UpdateState();
+        UpdateTransformFromState();
     }
 
-    public void UpdateState()
+    public void UpdateTransformFromState()
     {
-        transform.position = tempState.position;
-        transform.rotation = tempState.rotation;
+        transform.position = CurrentState.position;
+        transform.rotation = CurrentState.rotation;
         //tempState = ObjectState.GenerateObjectState(currentState.position, currentState.rotation, currentState.comments, currentState.rating, currentState.isRated, currentState.degreeOfCertainty);
     }
 
     public void UpdateUI()
     {
-        // TODO
+        InteractableObjectUI.instance.Visualize(currentInteractable);
     }
 
     #region interactions
@@ -82,6 +89,8 @@ public class InteractableObject : MonoBehaviour
         {
             child.GetComponent<MeshRenderer>().material.color = color;
         }
+        currentInteractable = this;
+        UpdateUI();
     }
 
     public void UnselectObject()
@@ -95,8 +104,21 @@ public class InteractableObject : MonoBehaviour
         }
     }
 
-    void OnMouseDown()
+    public static void Unselect()
     {
+        if (currentInteractable != null)
+        {
+            currentInteractable.UnselectObject();
+            currentInteractable = null;
+            InteractableObjectUI.instance.Visualize(null);
+        }
+    }
+
+    void OnMouseUp()
+    {
+        if (currentInteractable != null)
+            return;
+
         foreach (InteractableObject obj in interactables)
         {
             obj.UnselectObject();
@@ -108,14 +130,14 @@ public class InteractableObject : MonoBehaviour
     #region back-end actions
     public void SetPosition(Vector3 newPos)
     {
-        tempState.position = newPos;
-        UpdateState();
+        CurrentState.position = newPos;
+        UpdateTransformFromState();
     }
 
     public void SetRotation(Quaternion newRot)
     {
-        tempState.rotation = newRot;
-        UpdateState();
+        CurrentState.rotation = newRot;
+        UpdateTransformFromState();
     }
 
     public void AddComment(string commenter, string comment)
@@ -124,37 +146,59 @@ public class InteractableObject : MonoBehaviour
         newComment.commenter = commenter;
         newComment.comment = comment;
 
-        tempState.comments.Add(newComment);
+        states[currentStateID].comments.Add(newComment);
+        UpdateUI();
+    }
+
+    public void AddComment(Comment newComment)
+    {
+        states[currentStateID].comments.Add(newComment);
+        UpdateUI();
     }
 
     public void RemoveComment(int commentIndex)
     {
-        tempState.comments.RemoveAt(commentIndex);
+        states[currentStateID].comments.RemoveAt(commentIndex);
+        UpdateUI();
     }
 
-    public void SetRatiing(float rating)
+    public void SetRating(float rating)
     {
-        tempState.isRated = true;
-        tempState.rating = rating;
+        states[currentStateID].SetRating(rating);
+        UpdateUI();
     }
 
     public void SetCertainty(Certainty certainty)
     {
-        tempState.degreeOfCertainty = certainty;
+        Debug.Log("Changed certainty to " + certainty);
+        states[currentStateID].degreeOfCertainty = certainty;
+        UpdateUI();
     }
 
-    public void SaveTempToCurrentState()
+    public void SetState(int stateIndex)
     {
-        states[currentStateID] = tempState;
+        currentStateID = stateIndex;
         ResetState();
+        UpdateUI();
     }
 
-    public void SaveTempToNewState()
+    public void CreateNewState()
+
     {
-        ObjectState newObjectState = ObjectState.CloneObjectState(tempState);
+        ObjectState newObjectState = ObjectState.GenerateObjectState(transform.position, transform.rotation);
         states.Add(newObjectState);
         currentStateID = states.IndexOf(newObjectState);
         ResetState();
+        UpdateUI();
+    }
+
+    public void CloneToNewState()
+    {
+        ObjectState newObjectState = ObjectState.CloneObjectState(CurrentState);
+        states.Add(newObjectState);
+        currentStateID = states.IndexOf(newObjectState);
+        ResetState();
+        UpdateUI();
     }
 
     public void RemoveState()
@@ -164,17 +208,40 @@ public class InteractableObject : MonoBehaviour
             states.RemoveAt(currentStateID);
             currentStateID = 0;
             ResetState();
+            UpdateUI();
         }
         else
         {
-            throw new System.Exception("[InteractableObject] Trying to delete the only state that exists.");
+            Debug.LogWarning("[InteractableObject] Can not delete the only state that exists.");
         }
     }
     #endregion
+
+    public void Test()
+    {
+
+        Comment comm1; comm1.comment = "I really like this one."; comm1.commenter = "mister";
+        Comment comm2; comm2.comment = "I hate this..."; comm2.commenter = "jeff";
+        List<Comment> comms = new List<Comment> { comm1, comm2 };
+
+        ObjectState testObject = ObjectState.GenerateObjectState(transform.position, transform.rotation, comms, 3, true, Certainty.None);
+        states[currentStateID] = testObject;
+
+        Comment comm3; comm3.comment = "well well well"; comm3.commenter = "wellman";
+        Comment comm4; comm4.comment = "this is wrong"; comm4.commenter = "peter";
+        List<Comment> comms2 = new List<Comment> { comm3, comm4 };
+
+        ObjectState testObject2 = ObjectState.GenerateObjectState(transform.position, transform.rotation, comms2, 2, true, Certainty.Medium);
+        states.Add(testObject2);
+
+        Debug.Log("Testing...");
+        ResetState();
+        UpdateUI();
+    }
 }
 
 [System.Serializable]
-public struct ObjectState
+public class ObjectState
 {
     public Vector3 position;
     public Quaternion rotation;
@@ -188,10 +255,13 @@ public struct ObjectState
         ObjectState objState = new ObjectState();
         objState.position = pos;
         objState.rotation = rot;
-        objState.comments = comms;
         objState.rating = rate;
         objState.isRated = rated;
         objState.degreeOfCertainty = certainty;
+        if (comms == null)
+            objState.comments = new List<Comment>();
+        else
+            objState.comments = comms;
         return objState;
     }
 
@@ -205,6 +275,21 @@ public struct ObjectState
         objState.isRated = objectState.isRated;
         objState.degreeOfCertainty = objectState.degreeOfCertainty;
         return objState;
+    }
+
+    public void SetPosition(Vector3 newPos)
+    {
+        position = newPos;
+    }
+
+    public void SetRotation(Quaternion newRot)
+    {
+        rotation = newRot;
+    }
+
+    public void SetRating(float newRating)
+    {
+        rating = newRating;
     }
 }
 
