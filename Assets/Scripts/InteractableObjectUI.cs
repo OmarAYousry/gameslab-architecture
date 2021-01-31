@@ -69,6 +69,23 @@ public class InteractableObjectUI : MonoBehaviour
         gameObject.SetActive(true);
         intObj = iObj;
 
+        if (intObj.States.Count <= 0)
+        {
+            statesView.gameObject.SetActive(false);
+            commentsView.gameObject.SetActive(false);
+            cloneToNewState.gameObject.SetActive(false);
+            deleteStateButton.gameObject.SetActive(false);
+            elementName.text = intObj.name;
+            stateNumber.text = "No States";
+            return;
+        }
+
+
+        statesView.gameObject.SetActive(true);
+        commentsView.gameObject.SetActive(true);
+        cloneToNewState.gameObject.SetActive(true);
+        deleteStateButton.gameObject.SetActive(true);
+
         statesView.Visualize(intObj.States, intObj.CurrentStateID, intObj.SetState);
         commentsView.Visualize(intObj.CurrentState.comments, intObj.AddComment, intObj.RemoveComment);
         certaintyView.Visualize(intObj.CurrentState.degreeOfCertainty, intObj.SetCertainty);

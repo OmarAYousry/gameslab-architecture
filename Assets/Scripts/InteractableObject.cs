@@ -35,7 +35,7 @@ public class InteractableObject : MonoBehaviour
         if (states == null)
         {
             states = new List<ObjectState>();
-            ObjectState objState = ObjectState.GenerateObjectState(transform.position, transform.rotation);
+            ObjectState objState = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation);
             states.Add(objState);
             currentStateID = 0;
         }
@@ -44,10 +44,13 @@ public class InteractableObject : MonoBehaviour
 
         if (autoSetTag)
             transform.tag = tagName;
+    }
 
+    void Start()
+    {
         originalColor = GetComponent<MeshRenderer>().material.color;
         originalChildrenColors = new List<Color>();
-        foreach (Transform child in transform) 
+        foreach (Transform child in transform)
         {
             originalChildrenColors.Add(child.GetComponent<MeshRenderer>().material.color);
         }
@@ -70,8 +73,8 @@ public class InteractableObject : MonoBehaviour
 
     public void UpdateTransformFromState()
     {
-        transform.position = CurrentState.position;
-        transform.rotation = CurrentState.rotation;
+        transform.localPosition = CurrentState.position;
+        transform.localRotation = CurrentState.rotation;
         //tempState = ObjectState.GenerateObjectState(currentState.position, currentState.rotation, currentState.comments, currentState.rating, currentState.isRated, currentState.degreeOfCertainty);
     }
 
@@ -184,7 +187,7 @@ public class InteractableObject : MonoBehaviour
 
     public void CreateNewState()
     {
-        ObjectState newObjectState = ObjectState.GenerateObjectState(transform.position, transform.rotation);
+        ObjectState newObjectState = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation);
         states.Add(newObjectState);
         currentStateID = states.IndexOf(newObjectState);
         ResetState();
@@ -223,14 +226,14 @@ public class InteractableObject : MonoBehaviour
         Comment comm2; comm2.comment = "I hate this..."; comm2.commenter = "jeff";
         List<Comment> comms = new List<Comment> { comm1, comm2 };
 
-        ObjectState testObject = ObjectState.GenerateObjectState(transform.position, transform.rotation, comms, 3, true, Certainty.None);
+        ObjectState testObject = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation, comms, 3, true, Certainty.None);
         states[currentStateID] = testObject;
 
         Comment comm3; comm3.comment = "well well well"; comm3.commenter = "wellman";
         Comment comm4; comm4.comment = "this is wrong"; comm4.commenter = "peter";
         List<Comment> comms2 = new List<Comment> { comm3, comm4 };
 
-        ObjectState testObject2 = ObjectState.GenerateObjectState(transform.position, transform.rotation, comms2, 2, true, Certainty.Medium);
+        ObjectState testObject2 = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation, comms2, 2, true, Certainty.Medium);
         states.Add(testObject2);
 
         Debug.Log("Testing...");
