@@ -183,7 +183,6 @@ public class InteractableObject : MonoBehaviour
     }
 
     public void CreateNewState()
-
     {
         ObjectState newObjectState = ObjectState.GenerateObjectState(transform.position, transform.rotation);
         states.Add(newObjectState);
