@@ -116,6 +116,7 @@ public class InteractableObject : MonoBehaviour
             currentInteractable.UnselectObject();
             currentInteractable = null;
             InteractableObjectUI.instance.Visualize(null);
+            DataPersistence.SerializeObjectStates();
         }
     }
 
