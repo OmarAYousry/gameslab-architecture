@@ -5,16 +5,6 @@ using UnityEngine;
 
 public static class DataPersistence
 {
-    public static ObjectState GetObjectStateForSegment(string segmentName)
-    {
-        // deserialize and find the correct name
-        // maybe also have a pre-list of names?
-
-        ObjectState test = new ObjectState();
-        
-        return test;
-    }
-
     public static void SerializeObjectStates()
     {
         List<StatesDictionary> allStates = new List<StatesDictionary>();
@@ -26,7 +16,8 @@ public static class DataPersistence
 
         XmlSerializer serializer = new XmlSerializer(typeof(List<StatesDictionary>));
 
-        FileStream serializationStream = File.Open($"{BuildingBehaviour.BuildingName}.xml", FileMode.Create);
+        string filePath = $"{Application.persistentDataPath}{Path.DirectorySeparatorChar}{BuildingBehaviour.BuildingName}.xml";
+        FileStream serializationStream = File.Open(filePath, FileMode.Create);
         try
         {
             serializer.Serialize(serializationStream, allStates);
@@ -45,7 +36,8 @@ public static class DataPersistence
     {
         XmlSerializer serializer = new XmlSerializer(typeof(List<StatesDictionary>));
 
-        FileStream fs = new FileStream($"{BuildingBehaviour.BuildingName}.xml", FileMode.Open);
+        string filePath = $"{Application.persistentDataPath}{Path.DirectorySeparatorChar}{BuildingBehaviour.BuildingName}.xml";
+        FileStream fs = new FileStream(filePath, FileMode.Open);
 
         List<StatesDictionary> allObjectStates = (List<StatesDictionary>) serializer.Deserialize(fs);
 
