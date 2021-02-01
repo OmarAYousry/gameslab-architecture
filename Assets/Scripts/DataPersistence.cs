@@ -10,7 +10,7 @@ public static class DataPersistence
         List<StatesDictionary> allStates = new List<StatesDictionary>();
         foreach (InteractableObject interObj in InteractableObject.interactables)
         {
-            allStates.Add(new StatesDictionary(interObj.name, interObj.states));
+            allStates.Add(new StatesDictionary(interObj.name, interObj.states, interObj.CurrentStateID));
         }
 
 
@@ -58,7 +58,7 @@ public static class DataPersistence
                 if (currentEntry != null)
                 {
                     interObj.states = currentEntry.objectStates;
-                    interObj.SetState(0);
+                    interObj.SetState(currentEntry.defaultStateID);
                 }
                 else
                 {
@@ -83,17 +83,20 @@ public static class DataPersistence
     {
         public string objectName;
         public List<ObjectState> objectStates;
+        public int defaultStateID;
 
         public StatesDictionary()
         {
             objectName = string.Empty;
             objectStates = new List<ObjectState>();
+            defaultStateID = 0;
         }
 
-        public StatesDictionary(string objectName, List<ObjectState> objectStates)
+        public StatesDictionary(string objectName, List<ObjectState> objectStates, int defaultStateID)
         {
             this.objectName = objectName;
             this.objectStates = objectStates;
+            this.defaultStateID = defaultStateID;
         }
     }
 
