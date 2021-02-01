@@ -10,9 +10,11 @@ public class InteractableObject : MonoBehaviour
     public bool autoSetTag = true;
     public string tagName = "Interactable";
 
-    List<ObjectState> states;
+    public List<ObjectState> states { get; set; }
     int currentStateID = 0;
-    
+
+    List<Material> defaultMats = null;
+
     Color originalColor;
     List<Color> originalChildrenColors;
     MovementControl movement;
@@ -33,6 +35,12 @@ public class InteractableObject : MonoBehaviour
 
     void Awake()
     {
+        defaultMats = new List<Material>();
+        foreach (MeshRenderer renderer in GetComponentsInChildren<MeshRenderer>())
+        {
+            defaultMats.Add(renderer.material);
+        }
+
         if (states == null)
         {
             states = new List<ObjectState>();
@@ -88,24 +96,38 @@ public class InteractableObject : MonoBehaviour
     #region interactions
     public void SelectObject()
     {
-        Color color = new Color(Color.yellow.r, Color.yellow.g, Color.yellow.b, GetComponent<MeshRenderer>().material.color.a);
-        GetComponent<MeshRenderer>().material.color = color;
-        foreach (Transform child in transform)
-        {
-            child.GetComponent<MeshRenderer>().material.color = color;
-        }
+        applySelectColors();
         currentInteractable = this;
         UpdateUI();
     }
 
     public void UnselectObject()
     {
-        GetComponent<MeshRenderer>().material.color = originalColor;
+        applyOriginalColors();
+    }
+
+    private void applyOriginalColors()
+    {
+        Color originalColorToApply = originalColor;
+        originalColorToApply.a = GetComponent<MeshRenderer>().material.color.a;
+        GetComponent<MeshRenderer>().material.color = originalColorToApply;
         int i = 0;
         foreach (Transform child in transform)
         {
-            child.GetComponent<MeshRenderer>().material.color = originalChildrenColors[i];
+            Color colorToApply = originalChildrenColors[i];
+            colorToApply.a = child.GetComponent<MeshRenderer>().material.color.a;
+            child.GetComponent<MeshRenderer>().material.color = colorToApply;
             i++;
+        }
+    }
+
+    private void applySelectColors()
+    {
+        Color color = new Color(Color.yellow.r, Color.yellow.g, Color.yellow.b, GetComponent<MeshRenderer>().material.color.a);
+        GetComponent<MeshRenderer>().material.color = color;
+        foreach (Transform child in transform)
+        {
+            child.GetComponent<MeshRenderer>().material.color = color;
         }
     }
 
@@ -179,6 +201,7 @@ public class InteractableObject : MonoBehaviour
         Debug.Log("Changed certainty to " + certainty);
         states[currentStateID].degreeOfCertainty = certainty;
         UpdateUI();
+        ToggleCertaintyMaterial(CertaintyMaterialization.isPreviewCertainty, CertaintyMaterialization.CertaintyMats);
     }
 
     public void SetState(int stateIndex)
@@ -262,6 +285,51 @@ public class InteractableObject : MonoBehaviour
         Debug.Log("Testing...");
         ResetState();
         UpdateUI();
+    }
+
+    public void ToggleCertaintyMaterial(bool applyingCertainty, Material[] certaintyMats = null)
+    {
+        if (applyingCertainty)
+        {
+            switch (CurrentState.degreeOfCertainty)
+            {
+                case Certainty.None:
+                    applyDefaultMats();
+                    break;
+                case Certainty.Low:
+                case Certainty.Medium:
+                case Certainty.High:
+                    applyCertaintyMaterial(certaintyMats[((int) CurrentState.degreeOfCertainty) - 1]);
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+            applyDefaultMats();
+
+        if (currentInteractable == this)
+            applySelectColors();
+        else
+            applyOriginalColors();
+    }
+
+    private void applyDefaultMats()
+    {
+        MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
+        for (int i = 0; i < meshRenderers.Length; i++)
+        {
+            meshRenderers[i].material = defaultMats[i];
+        }
+    }
+
+    private void applyCertaintyMaterial(Material certaintyMaterial)
+    {
+        MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
+        foreach (MeshRenderer renderer in meshRenderers)
+        {
+            renderer.material = certaintyMaterial;
+        }
     }
 }
 
