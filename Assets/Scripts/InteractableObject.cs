@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MovementControl))]
+[RequireComponent(typeof(TransformControl))]
 public class InteractableObject : MonoBehaviour
 {
     public static List<InteractableObject> interactables = new List<InteractableObject>();
@@ -17,7 +17,7 @@ public class InteractableObject : MonoBehaviour
 
     Color originalColor;
     List<Color> originalChildrenColors;
-    MovementControl movement;
+    TransformControl movement;
     public List<ObjectState> States
     {
         get { return states; }
@@ -44,7 +44,7 @@ public class InteractableObject : MonoBehaviour
         if (states == null)
         {
             states = new List<ObjectState>();
-            ObjectState objState = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation);
+            ObjectState objState = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation, transform.localScale);
             states.Add(objState);
             currentStateID = 0;
         }
@@ -54,7 +54,7 @@ public class InteractableObject : MonoBehaviour
         if (autoSetTag)
             transform.tag = tagName;
 
-        movement = GetComponent<MovementControl>();
+        movement = GetComponent<TransformControl>();
     }
 
     void Start()
@@ -86,6 +86,7 @@ public class InteractableObject : MonoBehaviour
     {
         transform.localPosition = CurrentState.position;
         transform.localRotation = CurrentState.rotation;
+        transform.localScale = CurrentState.scale;
     }
 
     public void UpdateUI()
@@ -153,19 +154,27 @@ public class InteractableObject : MonoBehaviour
         }
         SelectObject();
     }
+
+    public void SetTempScale(Vector3 newScale)
+    {
+        transform.position = newScale;
+    }
     #endregion
 
     #region back-end actions
     public void SetPosition(Vector3 newPos)
     {
         CurrentState.position = newPos;
-        UpdateTransformFromState();
     }
 
     public void SetRotation(Quaternion newRot)
     {
         CurrentState.rotation = newRot;
-        UpdateTransformFromState();
+    }
+
+    public void SetScale(Vector3 newScale)
+    {
+        CurrentState.scale = newScale;
     }
 
     public void AddComment(string commenter, string comment)
@@ -199,7 +208,7 @@ public class InteractableObject : MonoBehaviour
     public void SetCertainty(Certainty certainty)
     {
         Debug.Log("Changed certainty to " + certainty);
-        states[currentStateID].degreeOfCertainty = certainty;
+        states[currentStateID].semanticCertainty = certainty;
         UpdateUI();
         ToggleCertaintyMaterial(CertaintyMaterialization.isPreviewCertainty, CertaintyMaterialization.CertaintyMats);
     }
@@ -213,7 +222,7 @@ public class InteractableObject : MonoBehaviour
 
     public void CreateNewState()
     {
-        ObjectState newObjectState = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation);
+        ObjectState newObjectState = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation, transform.localScale);
         states.Add(newObjectState);
         currentStateID = states.IndexOf(newObjectState);
         ResetState();
@@ -261,6 +270,8 @@ public class InteractableObject : MonoBehaviour
         movement.enabled = false;
         SetPosition(transform.localPosition);
         SetRotation(transform.localRotation);
+        SetScale(transform.localScale);
+        UpdateTransformFromState();
         UpdateUI();
     }
     #endregion
@@ -272,14 +283,14 @@ public class InteractableObject : MonoBehaviour
         Comment comm2; comm2.comment = "I hate this..."; comm2.commenter = "jeff";
         List<Comment> comms = new List<Comment> { comm1, comm2 };
 
-        ObjectState testObject = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation, comms, 3, true, Certainty.None);
+        ObjectState testObject = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation, transform.localScale, comms, 3, true, Certainty.None, Certainty.None);
         states[currentStateID] = testObject;
 
         Comment comm3; comm3.comment = "well well well"; comm3.commenter = "wellman";
         Comment comm4; comm4.comment = "this is wrong"; comm4.commenter = "peter";
         List<Comment> comms2 = new List<Comment> { comm3, comm4 };
 
-        ObjectState testObject2 = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation, comms2, 2, true, Certainty.Medium);
+        ObjectState testObject2 = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation, transform.localScale, comms2, 2, true, Certainty.Medium, Certainty.Medium);
         states.Add(testObject2);
 
         Debug.Log("Testing...");
@@ -291,7 +302,7 @@ public class InteractableObject : MonoBehaviour
     {
         if (applyingCertainty)
         {
-            switch (CurrentState.degreeOfCertainty)
+            switch (CurrentState.semanticCertainty)
             {
                 case Certainty.None:
                     applyDefaultMats();
@@ -299,7 +310,7 @@ public class InteractableObject : MonoBehaviour
                 case Certainty.Low:
                 case Certainty.Medium:
                 case Certainty.High:
-                    applyCertaintyMaterial(certaintyMats[((int) CurrentState.degreeOfCertainty) - 1]);
+                    applyCertaintyMaterial(certaintyMats[((int) CurrentState.semanticCertainty) - 1]);
                     break;
                 default:
                     break;
@@ -338,23 +349,24 @@ public class ObjectState
 {
     public Vector3 position;
     public Quaternion rotation;
+    public Vector3 scale;
     public List<Comment> comments;
     public float rating; // 0.0 - 5.0
     public bool isRated;
-    public Certainty degreeOfCertainty;
+    public Certainty semanticCertainty;
+    public Certainty geometricCertainty;
 
-    public static ObjectState GenerateObjectState(Vector3 pos, Quaternion rot, List<Comment> comms = null, float rate = 0, bool rated = false, Certainty certainty = Certainty.None)
+    public static ObjectState GenerateObjectState(Vector3 pos, Quaternion rot, Vector3 scale, List<Comment> comms = null, float rate = 0, bool rated = false, Certainty semantic = Certainty.None, Certainty geometric = Certainty.None)
     {
         ObjectState objState = new ObjectState();
         objState.position = pos;
         objState.rotation = rot;
+        objState.scale = scale;
         objState.rating = rate;
         objState.isRated = rated;
-        objState.degreeOfCertainty = certainty;
-        if (comms == null)
-            objState.comments = new List<Comment>();
-        else
-            objState.comments = comms;
+        objState.semanticCertainty = semantic;
+        objState.semanticCertainty = geometric;
+        objState.comments = (comms == null)? new List<Comment>() : comms;
         return objState;
     }
 
@@ -363,10 +375,12 @@ public class ObjectState
         ObjectState objState = new ObjectState();
         objState.position = objectState.position;
         objState.rotation = objectState.rotation;
+        objState.scale = objectState.scale;
         objState.comments = objectState.comments;
         objState.rating = objectState.rating;
         objState.isRated = objectState.isRated;
-        objState.degreeOfCertainty = objectState.degreeOfCertainty;
+        objState.semanticCertainty = objectState.semanticCertainty;
+        objState.geometricCertainty = objectState.geometricCertainty;
         return objState;
     }
 

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class MovementControl : MonoBehaviour
+public class TransformControl : MonoBehaviour
 {
     private Vector3 offset;
 
