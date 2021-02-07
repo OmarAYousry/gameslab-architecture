@@ -205,12 +205,20 @@ public class InteractableObject : MonoBehaviour
         UpdateUI();
     }
 
-    public void SetCertainty(Certainty certainty)
+    public void SetSemanticCertainty(Certainty certainty)
     {
-        Debug.Log("Changed certainty to " + certainty);
+        Debug.Log("Changed semantic certainty to " + certainty);
         states[currentStateID].semanticCertainty = certainty;
         UpdateUI();
         ToggleCertaintyMaterial(CertaintyMaterialization.isPreviewCertainty, CertaintyMaterialization.CertaintyMats);
+    }
+
+    public void SetGeometricCertainty(Certainty certainty)
+    {
+        Debug.Log("Changed geometric certainty to " + certainty);
+        states[currentStateID].geometricCertainty = certainty;
+        UpdateUI();
+        //ToggleCertaintyMaterial(CertaintyMaterialization.isPreviewCertainty, CertaintyMaterialization.CertaintyMats);
     }
 
     public void SetState(int stateIndex)

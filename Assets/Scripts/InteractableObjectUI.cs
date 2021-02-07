@@ -27,7 +27,9 @@ public class InteractableObjectUI : MonoBehaviour
     [SerializeField]
     Text stateNumber;
     [SerializeField]
-    CertaintyUI certaintyView;
+    CertaintyUI semanticCertainty;
+    [SerializeField]
+    CertaintyUI geometricCertainty;
     [SerializeField]
     RatingUI ratingView;
 
@@ -97,7 +99,8 @@ public class InteractableObjectUI : MonoBehaviour
 
         statesView.Visualize(intObj.States, intObj.CurrentStateID, intObj.SetState);
         commentsView.Visualize(intObj.CurrentState.comments, intObj.AddComment, intObj.RemoveComment);
-        certaintyView.Visualize(intObj.CurrentState.semanticCertainty, intObj.SetCertainty);
+        semanticCertainty.Visualize(intObj.CurrentState.semanticCertainty, intObj.SetSemanticCertainty);
+        geometricCertainty.Visualize(intObj.CurrentState.geometricCertainty, intObj.SetGeometricCertainty);
         ratingView.Visualize(intObj.CurrentState.rating, intObj.SetRating);
         movementView.Visualize(intObj, intObj.DisableMovementAndSave, intObj.DisableMovementAndCancel);
 
