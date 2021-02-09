@@ -5,11 +5,11 @@
 		_MainTex("Texture", 2D) = "white" {}
 		_RampTex("Ramp", 2D) = "white" {}
 		_Color("Color", Color) = (1, 1, 1, 1)
-		_OutlineExtrusion("Outline Extrusion", float) = 0
+		_OutlineExtrusion("Outline Extrusion", float) = 0.001
 		_OutlineColor("Outline Color", Color) = (0, 0, 0, 1)
 		_OutlineDot("Outline Dot", float) = 0.25
 		_OutlineDot2("Outline Dot Distance", float) = 0.5
-		_OutlineSpeed("Outline Dot Speed", float) = 50.0
+		_OutlineSpeed("Outline Dot Speed", float) = 200.0
 		_SourcePos("Source Position", vector) = (0, 0, 0, 0)
 	}
 
