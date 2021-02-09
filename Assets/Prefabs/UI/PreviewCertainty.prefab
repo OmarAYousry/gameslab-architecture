@@ -315,7 +315,6 @@ GameObject:
   - component: {fileID: 3671584619200479835}
   - component: {fileID: 3671584619200479836}
   - component: {fileID: 4222544846578064076}
-  - component: {fileID: 6281760432481672476}
   m_Layer: 5
   m_Name: PreviewCertainty
   m_TagString: Untagged
@@ -422,19 +421,6 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 3fe0ad1f68e1f0e4d9e8beedcfb4539f, type: 2}
   geometricCertaintyShader: {fileID: 4800000, guid: 2cd48174fbab62a4ca5674380310336c,
     type: 3}
---- !u!114 &6281760432481672476
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3671584619200479837}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AllowSwitchOff: 1
 --- !u!1 &3671584619425907459
 GameObject:
   m_ObjectHideFlags: 0
@@ -589,7 +575,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3671584618711479115}
   toggleTransition: 1
   graphic: {fileID: 3671584619425907457}
-  m_Group: {fileID: 6281760432481672476}
+  m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -685,7 +671,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4187150028019331473}
   toggleTransition: 1
   graphic: {fileID: 1971739640886473033}
-  m_Group: {fileID: 6281760432481672476}
+  m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
       m_Calls:

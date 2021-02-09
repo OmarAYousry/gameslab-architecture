@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(TransformControl))]
+[RequireComponent(typeof(TransformControl), typeof(Outline))]
 public class InteractableObject : MonoBehaviour
 {
     public static List<InteractableObject> interactables = new List<InteractableObject>();
@@ -14,8 +14,9 @@ public class InteractableObject : MonoBehaviour
     int currentStateID = 0;
 
     List<Material> defaultMats = null;
+    Outline objectOutline = null;
 
-    List<Shader> defaultShaders = null;
+
 
     Color originalColor;
     List<Color> originalChildrenColors;
@@ -37,12 +38,16 @@ public class InteractableObject : MonoBehaviour
 
     void Awake()
     {
+        objectOutline = GetComponent<Outline>();
+        if (objectOutline == null)
+            objectOutline = gameObject.AddComponent<Outline>();
+
+        objectOutline.enabled = false;
+
         defaultMats = new List<Material>();
-        defaultShaders = new List<Shader>();
         foreach (MeshRenderer renderer in GetComponentsInChildren<MeshRenderer>())
         {
             defaultMats.Add(renderer.material);
-            defaultShaders.Add(renderer.material.shader);
         }
 
         if (states == null)
@@ -312,27 +317,14 @@ public class InteractableObject : MonoBehaviour
 
     public void ToggleSemanticCertaity(bool applyingCertainty, Material[] certaintyMats = null)
     {
-        //if (applyingCertainty)
-        //{
-        //    switch (CurrentState.semanticCertainty)
-        //    {
-        //        case Certainty.None:
-        //            applyDefaultMats();
-        //            break;
-        //        case Certainty.Low:
-        //        case Certainty.Medium:
-        //        case Certainty.High:
-        //            applyCertaintyMaterial(certaintyMats[((int) CurrentState.semanticCertainty) - 1]);
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //}
-        //else
-        //    applyDefaultMats();
+        if (applyingCertainty)
+            applyCertaintyMaterial(certaintyMats[0]);
+        else
+            applyDefaultMats();
+        
 
-        //if (currentInteractable == this)
-        //    applySelectColors();
+        if (currentInteractable == this)
+            applySelectColors();
         //else
         //    applyOriginalColors();
     }
@@ -341,62 +333,34 @@ public class InteractableObject : MonoBehaviour
 
     public void ToggleGeometricCertainty(bool applyingCertainty, Shader geometricCertaintyShader)
     {
-        //if (applyingCertainty)
-        //{
-        //    applyGeoCertaintyShaders(geometricCertaintyShader);
+        if (applyingCertainty)
+        {
+            objectOutline.OutlineMode = Outline.Mode.OutlineAll;
+            Color outlineColor;
+            if (CurrentState.semanticCertainty < 0.5f)
+            {
+                outlineColor = Color.Lerp(Color.red, Color.green, Mathf.Max(0.1f, CurrentState.geometricCertainty));
+            }
+            else
+            {
+                outlineColor = Color.Lerp(Color.yellow, Color.green, (CurrentState.geometricCertainty - 0.5f) * 2);
+            }
+            //outlineColor.a = CurrentState.geometricCertainty;
+            objectOutline.OutlineColor = outlineColor;
+            objectOutline.OutlineWidth = Mathf.Lerp(5f, 40f, CurrentState.geometricCertainty);
+            objectOutline.OutlineMode = Outline.Mode.OutlineAll;
+            objectOutline.enabled = true;
+        }
+        else
+        {
+            objectOutline.enabled = false;
+        }
 
-        //    switch (CurrentState.geometricCertainty)
-        //    {
-        //        case Certainty.None:
-        //            applyGeoCertaintyDistancing(-1f);
-        //            break;
-        //        case Certainty.Low:
-        //            applyGeoCertaintyDistancing(-0.5f);
-        //            break;
-        //        case Certainty.Medium:
-        //            applyGeoCertaintyDistancing(0.5f);
-        //            break;
-        //        case Certainty.High:
-        //            applyGeoCertaintyDistancing(1.0f);
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //}
-        //else
-        //{
-        //    applyDefaultShaders();
-        //}
-
-        //if (currentInteractable == this)
-        //    applySelectColors();
+        if (currentInteractable == this)
+            applySelectColors();
         //else
         //    applyOriginalColors();
 
-    }
-    
-    private void applyDefaultShaders()
-    {
-        foreach (Material mat in defaultMats)
-        {
-            mat.shader = defaultShaders[defaultMats.IndexOf(mat)];
-        }
-    }
-    
-    private void applyGeoCertaintyShaders(Shader geometricCertaintyShader)
-    {
-        foreach (Material mat in defaultMats)
-        {
-            mat.shader = geometricCertaintyShader;
-        }
-    }
-
-    private void applyGeoCertaintyDistancing(float outlineDistance)
-    {
-        foreach (Material mat in defaultMats)
-        {
-            mat.SetFloat("_OutlineDot2", outlineDistance);
-        }
     }
 
     private void applyDefaultMats()
@@ -406,6 +370,7 @@ public class InteractableObject : MonoBehaviour
         {
             meshRenderers[i].material = defaultMats[i];
         }
+        applyOriginalColors();
     }
 
     private void applyCertaintyMaterial(Material certaintyMaterial)
@@ -414,6 +379,10 @@ public class InteractableObject : MonoBehaviour
         foreach (MeshRenderer renderer in meshRenderers)
         {
             renderer.material = certaintyMaterial;
+
+            Color alphaColor = renderer.material.color;
+            alphaColor.a = CurrentState.semanticCertainty;
+            renderer.material.color = alphaColor;
         }
     }
 }
