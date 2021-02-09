@@ -10,20 +10,37 @@ public class CertaintyMaterialization : MonoBehaviour
 
     public static Material[] CertaintyMats { get { return instance.certaintyMatsSorted; } }
 
-    public static bool isPreviewCertainty { get; private set; } = false;
+    [SerializeField]
+    private Shader geometricCertaintyShader = null;
+
+    public static Shader GeometricCertaintyShader { get { return instance.geometricCertaintyShader; } }
+
+    public static bool isPreviewSemanticCertainty { get; private set; } = false;
+
+    public static bool isPreviewGeometricCertainty { get; private set; } = false;
 
     void Awake()
     {
         instance = this;        
     }
 
-    public void ToggleCertaintyMats(bool applyingCertainty)
+    public void ToggleSemanticCertainty(bool applyingCertainty)
     {
-        isPreviewCertainty = applyingCertainty;
+        isPreviewSemanticCertainty = applyingCertainty;
 
         foreach (InteractableObject interObj in InteractableObject.interactables)
         {
-            interObj.ToggleCertaintyMaterial(applyingCertainty, certaintyMatsSorted);
+            interObj.ToggleSemanticCertaity(applyingCertainty, certaintyMatsSorted);
+        }
+    }
+
+    public void ToggleGeometricCertainty(bool applyingCertainty)
+    {
+        isPreviewGeometricCertainty = applyingCertainty;
+
+        foreach (InteractableObject interObj in InteractableObject.interactables)
+        {
+            interObj.ToggleGeometricCertainty(applyingCertainty, geometricCertaintyShader); ;
         }
     }
 }
