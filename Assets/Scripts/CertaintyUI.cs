@@ -8,6 +8,9 @@ public class CertaintyUI : MonoBehaviour
     Certainty certainty;
     System.Action<Certainty> certaintyAction;
 
+    [SerializeField]
+    string certaintyTitle = "Certainy";
+
     [Header("References:")]
     [SerializeField]
     Text certaintyText;
@@ -19,7 +22,7 @@ public class CertaintyUI : MonoBehaviour
         certainty = cert;
         certaintyAction = certaintyChangeAction;
 
-        certaintyText.text = "Certainty: " + certainty.ToString();
+        certaintyText.text = certaintyTitle + ": " + certainty.ToString();
         
         switch (certainty)
         {
