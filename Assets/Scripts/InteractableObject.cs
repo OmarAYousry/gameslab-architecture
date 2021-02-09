@@ -395,6 +395,7 @@ public class InteractableObject : MonoBehaviour
     {
         foreach (Material mat in defaultMats)
         {
+            mat.SetFloat("_OutlineExtrusion", 0.025);
             mat.SetFloat("_OutlineDot2", outlineDistance);
         }
     }
