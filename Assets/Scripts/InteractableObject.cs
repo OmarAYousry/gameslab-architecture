@@ -15,6 +15,8 @@ public class InteractableObject : MonoBehaviour
 
     List<Material> defaultMats = null;
 
+    List<Shader> defaultShaders = null;
+
     Color originalColor;
     List<Color> originalChildrenColors;
     TransformControl movement;
@@ -36,9 +38,11 @@ public class InteractableObject : MonoBehaviour
     void Awake()
     {
         defaultMats = new List<Material>();
+        defaultShaders = new List<Shader>();
         foreach (MeshRenderer renderer in GetComponentsInChildren<MeshRenderer>())
         {
             defaultMats.Add(renderer.material);
+            defaultShaders.Add(renderer.material.shader);
         }
 
         if (states == null)
@@ -210,7 +214,7 @@ public class InteractableObject : MonoBehaviour
         Debug.Log("Changed semantic certainty to " + certainty);
         states[currentStateID].semanticCertainty = certainty;
         UpdateUI();
-        ToggleCertaintyMaterial(CertaintyMaterialization.isPreviewCertainty, CertaintyMaterialization.CertaintyMats);
+        ToggleSemanticCertaity(CertaintyMaterialization.isPreviewSemanticCertainty, CertaintyMaterialization.CertaintyMats);
     }
 
     public void SetGeometricCertainty(Certainty certainty)
@@ -218,7 +222,7 @@ public class InteractableObject : MonoBehaviour
         Debug.Log("Changed geometric certainty to " + certainty);
         states[currentStateID].geometricCertainty = certainty;
         UpdateUI();
-        //ToggleCertaintyMaterial(CertaintyMaterialization.isPreviewCertainty, CertaintyMaterialization.CertaintyMats);
+        ToggleGeometricCertainty(CertaintyMaterialization.isPreviewGeometricCertainty, CertaintyMaterialization.GeometricCertaintyShader);
     }
 
     public void SetState(int stateIndex)
@@ -306,7 +310,7 @@ public class InteractableObject : MonoBehaviour
         UpdateUI();
     }
 
-    public void ToggleCertaintyMaterial(bool applyingCertainty, Material[] certaintyMats = null)
+    public void ToggleSemanticCertaity(bool applyingCertainty, Material[] certaintyMats = null)
     {
         if (applyingCertainty)
         {
@@ -331,6 +335,68 @@ public class InteractableObject : MonoBehaviour
             applySelectColors();
         else
             applyOriginalColors();
+    }
+
+    public Material balabizo = null;
+
+    public void ToggleGeometricCertainty(bool applyingCertainty, Shader geometricCertaintyShader)
+    {
+        if (applyingCertainty)
+        {
+            applyGeoCertaintyShaders(geometricCertaintyShader);
+
+            switch (CurrentState.geometricCertainty)
+            {
+                case Certainty.None:
+                    applyGeoCertaintyDistancing(-1f);
+                    break;
+                case Certainty.Low:
+                    applyGeoCertaintyDistancing(-0.5f);
+                    break;
+                case Certainty.Medium:
+                    applyGeoCertaintyDistancing(0.5f);
+                    break;
+                case Certainty.High:
+                    applyGeoCertaintyDistancing(1.0f);
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            applyDefaultShaders();
+        }
+
+        if (currentInteractable == this)
+            applySelectColors();
+        else
+            applyOriginalColors();
+
+    }
+    
+    private void applyDefaultShaders()
+    {
+        foreach (Material mat in defaultMats)
+        {
+            mat.shader = defaultShaders[defaultMats.IndexOf(mat)];
+        }
+    }
+    
+    private void applyGeoCertaintyShaders(Shader geometricCertaintyShader)
+    {
+        foreach (Material mat in defaultMats)
+        {
+            mat.shader = geometricCertaintyShader;
+        }
+    }
+
+    private void applyGeoCertaintyDistancing(float outlineDistance)
+    {
+        foreach (Material mat in defaultMats)
+        {
+            mat.SetFloat("_OutlineDot2", outlineDistance);
+        }
     }
 
     private void applyDefaultMats()
@@ -373,7 +439,7 @@ public class ObjectState
         objState.rating = rate;
         objState.isRated = rated;
         objState.semanticCertainty = semantic;
-        objState.semanticCertainty = geometric;
+        objState.geometricCertainty = geometric;
         objState.comments = (comms == null)? new List<Comment>() : comms;
         return objState;
     }
