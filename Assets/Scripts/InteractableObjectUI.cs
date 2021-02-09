@@ -96,6 +96,7 @@ public class InteractableObjectUI : MonoBehaviour
         deleteStateButton.gameObject.SetActive(true);
         infoView.SetActive(true);
         movementView.gameObject.SetActive(false);
+        closeButton.gameObject.SetActive(true);
 
         statesView.Visualize(intObj.States, intObj.CurrentStateID, intObj.SetState);
         commentsView.Visualize(intObj.CurrentState.comments, intObj.AddComment, intObj.RemoveComment);
@@ -129,5 +130,6 @@ public class InteractableObjectUI : MonoBehaviour
         deleteStateButton.gameObject.SetActive(false);
         infoView.SetActive(false);
         movementView.gameObject.SetActive(true);
+        closeButton.gameObject.SetActive(false);
     }
 }
