@@ -381,7 +381,7 @@ public class InteractableObject : MonoBehaviour
             renderer.material = certaintyMaterial;
 
             Color alphaColor = renderer.material.color;
-            alphaColor.a = CurrentState.semanticCertainty;
+            alphaColor.a = Mathf.Max(0.2f, CurrentState.semanticCertainty);
             renderer.material.color = alphaColor;
         }
     }
