@@ -347,7 +347,7 @@ public class InteractableObject : MonoBehaviour
             }
             //outlineColor.a = CurrentState.geometricCertainty;
             objectOutline.OutlineColor = outlineColor;
-            objectOutline.OutlineWidth = Mathf.Lerp(5f, 40f, CurrentState.geometricCertainty);
+            objectOutline.OutlineWidth = Mathf.Lerp(5f, 10f, CurrentState.geometricCertainty);
             objectOutline.OutlineMode = Outline.Mode.OutlineAll;
             objectOutline.enabled = true;
         }
@@ -381,7 +381,7 @@ public class InteractableObject : MonoBehaviour
             renderer.material = certaintyMaterial;
 
             Color alphaColor = renderer.material.color;
-            alphaColor.a = Mathf.Max(0.2f, CurrentState.semanticCertainty);
+            alphaColor.a = Mathf.Max(0.1f, CurrentState.semanticCertainty);
             renderer.material.color = alphaColor;
         }
     }
