@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(TransformControl))]
+[RequireComponent(typeof(TransformControl), typeof(Outline))]
 public class InteractableObject : MonoBehaviour
 {
     public static List<InteractableObject> interactables = new List<InteractableObject>();
@@ -14,8 +14,9 @@ public class InteractableObject : MonoBehaviour
     int currentStateID = 0;
 
     List<Material> defaultMats = null;
+    Outline objectOutline = null;
 
-    List<Shader> defaultShaders = null;
+
 
     Color originalColor;
     List<Color> originalChildrenColors;
@@ -37,12 +38,16 @@ public class InteractableObject : MonoBehaviour
 
     void Awake()
     {
+        objectOutline = GetComponent<Outline>();
+        if (objectOutline == null)
+            objectOutline = gameObject.AddComponent<Outline>();
+
+        objectOutline.enabled = false;
+
         defaultMats = new List<Material>();
-        defaultShaders = new List<Shader>();
         foreach (MeshRenderer renderer in GetComponentsInChildren<MeshRenderer>())
         {
             defaultMats.Add(renderer.material);
-            defaultShaders.Add(renderer.material.shader);
         }
 
         if (states == null)
@@ -209,7 +214,7 @@ public class InteractableObject : MonoBehaviour
         UpdateUI();
     }
 
-    public void SetSemanticCertainty(Certainty certainty)
+    public void SetSemanticCertainty(float certainty)
     {
         Debug.Log("Changed semantic certainty to " + certainty);
         states[currentStateID].semanticCertainty = certainty;
@@ -217,7 +222,7 @@ public class InteractableObject : MonoBehaviour
         ToggleSemanticCertaity(CertaintyMaterialization.isPreviewSemanticCertainty, CertaintyMaterialization.CertaintyMats);
     }
 
-    public void SetGeometricCertainty(Certainty certainty)
+    public void SetGeometricCertainty(float certainty)
     {
         Debug.Log("Changed geometric certainty to " + certainty);
         states[currentStateID].geometricCertainty = certainty;
@@ -295,14 +300,14 @@ public class InteractableObject : MonoBehaviour
         Comment comm2; comm2.comment = "I hate this..."; comm2.commenter = "jeff";
         List<Comment> comms = new List<Comment> { comm1, comm2 };
 
-        ObjectState testObject = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation, transform.localScale, comms, 3, true, Certainty.None, Certainty.None);
+        ObjectState testObject = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation, transform.localScale, comms, 3, true, 0, 0.75f);
         states[currentStateID] = testObject;
 
         Comment comm3; comm3.comment = "well well well"; comm3.commenter = "wellman";
         Comment comm4; comm4.comment = "this is wrong"; comm4.commenter = "peter";
         List<Comment> comms2 = new List<Comment> { comm3, comm4 };
 
-        ObjectState testObject2 = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation, transform.localScale, comms2, 2, true, Certainty.Medium, Certainty.Medium);
+        ObjectState testObject2 = ObjectState.GenerateObjectState(transform.localPosition, transform.localRotation, transform.localScale, comms2, 2, true, 0.5f, 0.5f);
         states.Add(testObject2);
 
         Debug.Log("Testing...");
@@ -313,28 +318,15 @@ public class InteractableObject : MonoBehaviour
     public void ToggleSemanticCertaity(bool applyingCertainty, Material[] certaintyMats = null)
     {
         if (applyingCertainty)
-        {
-            switch (CurrentState.semanticCertainty)
-            {
-                case Certainty.None:
-                    applyDefaultMats();
-                    break;
-                case Certainty.Low:
-                case Certainty.Medium:
-                case Certainty.High:
-                    applyCertaintyMaterial(certaintyMats[((int) CurrentState.semanticCertainty) - 1]);
-                    break;
-                default:
-                    break;
-            }
-        }
+            applyCertaintyMaterial(certaintyMats[0]);
         else
             applyDefaultMats();
+        
 
         if (currentInteractable == this)
             applySelectColors();
-        else
-            applyOriginalColors();
+        //else
+        //    applyOriginalColors();
     }
 
     public Material balabizo = null;
@@ -343,61 +335,32 @@ public class InteractableObject : MonoBehaviour
     {
         if (applyingCertainty)
         {
-            applyGeoCertaintyShaders(geometricCertaintyShader);
-
-            switch (CurrentState.geometricCertainty)
+            objectOutline.OutlineMode = Outline.Mode.OutlineAll;
+            Color outlineColor;
+            if (CurrentState.semanticCertainty < 0.5f)
             {
-                case Certainty.None:
-                    applyGeoCertaintyDistancing(-1f);
-                    break;
-                case Certainty.Low:
-                    applyGeoCertaintyDistancing(-0.5f);
-                    break;
-                case Certainty.Medium:
-                    applyGeoCertaintyDistancing(0.5f);
-                    break;
-                case Certainty.High:
-                    applyGeoCertaintyDistancing(1.0f);
-                    break;
-                default:
-                    break;
+                outlineColor = Color.Lerp(Color.red, Color.green, Mathf.Max(0.1f, CurrentState.geometricCertainty));
             }
+            else
+            {
+                outlineColor = Color.Lerp(Color.yellow, Color.green, (CurrentState.geometricCertainty - 0.5f) * 2);
+            }
+            //outlineColor.a = CurrentState.geometricCertainty;
+            objectOutline.OutlineColor = outlineColor;
+            objectOutline.OutlineWidth = Mathf.Lerp(5f, 40f, CurrentState.geometricCertainty);
+            objectOutline.OutlineMode = Outline.Mode.OutlineAll;
+            objectOutline.enabled = true;
         }
         else
         {
-            applyDefaultShaders();
+            objectOutline.enabled = false;
         }
 
         if (currentInteractable == this)
             applySelectColors();
-        else
-            applyOriginalColors();
+        //else
+        //    applyOriginalColors();
 
-    }
-    
-    private void applyDefaultShaders()
-    {
-        foreach (Material mat in defaultMats)
-        {
-            mat.shader = defaultShaders[defaultMats.IndexOf(mat)];
-        }
-    }
-    
-    private void applyGeoCertaintyShaders(Shader geometricCertaintyShader)
-    {
-        foreach (Material mat in defaultMats)
-        {
-            mat.shader = geometricCertaintyShader;
-        }
-    }
-
-    private void applyGeoCertaintyDistancing(float outlineDistance)
-    {
-        foreach (Material mat in defaultMats)
-        {
-            mat.SetFloat("_OutlineExtrusion", 0.025f);
-            mat.SetFloat("_OutlineDot2", outlineDistance);
-        }
     }
 
     private void applyDefaultMats()
@@ -407,6 +370,7 @@ public class InteractableObject : MonoBehaviour
         {
             meshRenderers[i].material = defaultMats[i];
         }
+        applyOriginalColors();
     }
 
     private void applyCertaintyMaterial(Material certaintyMaterial)
@@ -415,6 +379,10 @@ public class InteractableObject : MonoBehaviour
         foreach (MeshRenderer renderer in meshRenderers)
         {
             renderer.material = certaintyMaterial;
+
+            Color alphaColor = renderer.material.color;
+            alphaColor.a = Mathf.Max(0.2f, CurrentState.semanticCertainty);
+            renderer.material.color = alphaColor;
         }
     }
 }
@@ -428,10 +396,10 @@ public class ObjectState
     public List<Comment> comments;
     public float rating; // 0.0 - 5.0
     public bool isRated;
-    public Certainty semanticCertainty;
-    public Certainty geometricCertainty;
+    public float semanticCertainty;
+    public float geometricCertainty;
 
-    public static ObjectState GenerateObjectState(Vector3 pos, Quaternion rot, Vector3 scale, List<Comment> comms = null, float rate = 0, bool rated = false, Certainty semantic = Certainty.None, Certainty geometric = Certainty.None)
+    public static ObjectState GenerateObjectState(Vector3 pos, Quaternion rot, Vector3 scale, List<Comment> comms = null, float rate = 0, bool rated = false, float semantic = 0, float geometric = 0)
     {
         ObjectState objState = new ObjectState();
         objState.position = pos;
@@ -476,17 +444,18 @@ public class ObjectState
 }
 
 [System.Serializable]
+public struct Comment
+{
+    public string commenter;
+    public string comment;
+}
+
+[System.Obsolete]
+[System.Serializable]
 public enum Certainty
 {
     None,
     Low,
     Medium,
     High,
-}
-
-[System.Serializable]
-public struct Comment
-{
-    public string commenter;
-    public string comment;
 }

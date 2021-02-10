@@ -5,8 +5,13 @@ using UnityEngine.UI;
 
 public class CertaintyUI : MonoBehaviour
 {
-    Certainty certainty;
-    System.Action<Certainty> certaintyAction;
+    [System.Obsolete]
+    Certainty certaintyEnum;
+    [System.Obsolete]
+    System.Action<Certainty> certaintyEnumAction;
+
+    float certaintyValue;
+    System.Action<float> certaintyAction;
 
     [SerializeField]
     string certaintyTitle = "Certainy";
@@ -17,14 +22,28 @@ public class CertaintyUI : MonoBehaviour
     [SerializeField]
     Slider certaintySlider;
 
-    public void Visualize(Certainty cert, System.Action<Certainty> certaintyChangeAction)
+    public void Visualize(float cert, System.Action<float> certaintyChangeAction)
     {
-        certainty = cert;
+        certaintyValue = cert;
         certaintyAction = certaintyChangeAction;
 
-        certaintyText.text = certaintyTitle + ": " + certainty.ToString();
+        certaintyText.text = certaintyTitle + ": " + ((int)(certaintyValue * 100)).ToString() + "%";
+
+        certaintySlider.value = certaintyValue;
+
+        certaintySlider.onValueChanged.RemoveAllListeners();
+        certaintySlider.onValueChanged.AddListener(SetPercentageText);
+    }
+
+    [System.Obsolete]
+    public void Visualize(Certainty cert, System.Action<Certainty> certaintyChangeAction)
+    {
+        certaintyEnum = cert;
+        certaintyEnumAction = certaintyChangeAction;
+
+        certaintyText.text = certaintyTitle + ": " + certaintyEnum.ToString();
         
-        switch (certainty)
+        switch (certaintyEnum)
         {
             case Certainty.None:
                 certaintySlider.value = 0;
@@ -63,21 +82,33 @@ public class CertaintyUI : MonoBehaviour
         //certaintySlider.onValueChanged.AddListener(new UnityEngine.Events.UnityAction<float>(sliderAction));
     }
 
+    public void SetPercentageText(float value)
+    {
+        certaintyText.text = certaintyTitle + ": " + ((int)(value * 100)).ToString() + "%";
+    }
+
     public void OnSliderRelease()
+    {
+        float f = certaintySlider.value;
+        certaintyAction(f);
+    }
+
+    [System.Obsolete]
+    public void OnSliderEnumRelease()
     {
         float f = certaintySlider.value;
         if (f == 0)
             return;
         if (f <= 0.05f)
-            certaintyAction(Certainty.None);
+            certaintyEnumAction(Certainty.None);
         else
         if (f > 0.05f && f <= 0.33f)
-            certaintyAction(Certainty.Low);
+            certaintyEnumAction(Certainty.Low);
         else
         if (f > 0.33f && f <= 0.66f)
-            certaintyAction(Certainty.Medium);
+            certaintyEnumAction(Certainty.Medium);
         else
         if (f > 0.66f)
-            certaintyAction(Certainty.High);
+            certaintyEnumAction(Certainty.High);
     }
 }
