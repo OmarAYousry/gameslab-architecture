@@ -2,7 +2,7 @@
 
 public class CertaintyMaterialization : MonoBehaviour
 {
-    private static CertaintyMaterialization instance = null;
+    public static CertaintyMaterialization instance = null;
 
     [Tooltip("Sort Ascendingly")]
     [SerializeField]

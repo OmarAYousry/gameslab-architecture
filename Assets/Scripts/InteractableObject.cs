@@ -113,7 +113,13 @@ public class InteractableObject : MonoBehaviour
 
     public void UnselectObject()
     {
-        applyOriginalColors();
+        if (currentInteractable = this)
+            currentInteractable = null;
+
+        if (!CertaintyMaterialization.isPreviewSemanticCertainty)
+            applyOriginalColors();
+        else
+            CertaintyMaterialization.instance.ToggleSemanticCertainty(true);
     }
 
     private void applyOriginalColors()
