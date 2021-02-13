@@ -113,7 +113,10 @@ public class InteractableObject : MonoBehaviour
 
     public void UnselectObject()
     {
-        applyOriginalColors();
+        if (CertaintyMaterialization.isPreviewSemanticCertainty)
+            applyCertaintyColors();
+        else
+            applyOriginalColors();
     }
 
     private void applyOriginalColors()
@@ -134,6 +137,16 @@ public class InteractableObject : MonoBehaviour
     private void applySelectColors()
     {
         Color color = new Color(Color.yellow.r, Color.yellow.g, Color.yellow.b, GetComponent<MeshRenderer>().material.color.a);
+        GetComponent<MeshRenderer>().material.color = color;
+        foreach (Transform child in transform)
+        {
+            child.GetComponent<MeshRenderer>().material.color = color;
+        }
+    }
+
+    private void applyCertaintyColors()
+    {
+        Color color = CertaintyMaterialization.CertaintyMats[0].color;
         GetComponent<MeshRenderer>().material.color = color;
         foreach (Transform child in transform)
         {
