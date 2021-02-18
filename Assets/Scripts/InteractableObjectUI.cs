@@ -86,7 +86,8 @@ public class InteractableObjectUI : MonoBehaviour
             movementView.gameObject.SetActive(false);
             infoView.SetActive(true);
             elementName.text = intObj.name;
-            stateNumber.text = "No States";
+            stateNumber.text = "No Variants";
+            //stateNumber.text = "No States";
             return;
         }
 
@@ -106,7 +107,8 @@ public class InteractableObjectUI : MonoBehaviour
         movementView.Visualize(intObj, intObj.DisableMovementAndSave, intObj.DisableMovementAndCancel);
 
         elementName.text = intObj.name;
-        stateNumber.text = "State: " + (intObj.CurrentStateID + 1).ToString();
+        stateNumber.text = "Variant: " + (intObj.CurrentStateID + 1).ToString();
+        //stateNumber.text = "State: " + (intObj.CurrentStateID + 1).ToString();
 
         movementButton.onClick.RemoveAllListeners();
         movementButton.onClick.AddListener(intObj.EnableMovement);
