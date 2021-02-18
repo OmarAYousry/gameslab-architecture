@@ -324,7 +324,7 @@ public class InteractableObject : MonoBehaviour
     public void ToggleSemanticCertaity(bool applyingCertainty, Material[] certaintyMats = null)
     {
         if (applyingCertainty)
-            applyCertaintyMaterial(certaintyMats[0]);
+            applyCertaintyMaterials(certaintyMats);
         else
             applyDefaultMats();
         
@@ -342,18 +342,21 @@ public class InteractableObject : MonoBehaviour
         if (applyingCertainty)
         {
             objectOutline.OutlineMode = Outline.Mode.OutlineAll;
-            Color outlineColor;
-            if (CurrentState.semanticCertainty < 0.5f)
-            {
-                outlineColor = Color.Lerp(Color.red, Color.green, Mathf.Max(0.1f, CurrentState.geometricCertainty));
-            }
-            else
-            {
-                outlineColor = Color.Lerp(Color.yellow, Color.green, (CurrentState.geometricCertainty - 0.5f) * 2);
-            }
+            Color outlineColor = Color.black ;
+            //if (CurrentState.geometricCertainty < 0.5f)
+            //{
+            //    outlineColor = Color.Lerp(Color.red, Color.green, Mathf.Max(0.1f, CurrentState.geometricCertainty));
+            //}
+            //else
+            //{
+            //    outlineColor = Color.Lerp(Color.yellow, Color.green, (CurrentState.geometricCertainty - 0.5f) * 2);
+            //}
             //outlineColor.a = CurrentState.geometricCertainty;
+            //outlineColor.a = Mathf.Max(0.3f, CurrentState.geometricCertainty);
+            outlineColor.a = CurrentState.geometricCertainty;
             objectOutline.OutlineColor = outlineColor;
-            objectOutline.OutlineWidth = Mathf.Lerp(5f, 10f, CurrentState.geometricCertainty);
+            //objectOutline.OutlineWidth = Mathf.Lerp(5f, 20f, CurrentState.geometricCertainty);
+            objectOutline.OutlineWidth = 8f;
             objectOutline.OutlineMode = Outline.Mode.OutlineAll;
             objectOutline.enabled = true;
         }
@@ -379,16 +382,35 @@ public class InteractableObject : MonoBehaviour
         applyOriginalColors();
     }
 
-    private void applyCertaintyMaterial(Material certaintyMaterial)
+    private void applyCertaintyMaterials(Material[] certaintyMats)
     {
         MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
         foreach (MeshRenderer renderer in meshRenderers)
         {
-            renderer.material = certaintyMaterial;
+            renderer.material = certaintyMats[0];
+            Color certaintyColor;
+            if (CurrentState.semanticCertainty <= 0.5f)
+            {
+                certaintyColor = certaintyMats[0].color;
+            }
+            else if (CurrentState.semanticCertainty <= 0.75f)
+            {
 
-            Color alphaColor = renderer.material.color;
-            alphaColor.a = Mathf.Max(0.1f, CurrentState.semanticCertainty);
-            renderer.material.color = alphaColor;
+                certaintyColor = Color.Lerp(certaintyMats[0].color, certaintyMats[1].color, (CurrentState.semanticCertainty - 0.5f) * 4);
+            }
+            else
+            {
+                certaintyColor = Color.Lerp(certaintyMats[1].color, certaintyMats[2].color, (CurrentState.semanticCertainty - 0.75f) * 4);
+            }
+
+            if (certaintyColor.a > 0.9f)
+            {
+                // set to opaque
+                renderer.material = certaintyMats[2];
+            }
+
+            //certaintyColor.a = Mathf.Max(0.3f, CurrentState.semanticCertainty);
+            renderer.material.color = certaintyColor;
         }
     }
 }
