@@ -6,8 +6,11 @@ public class TransformControl : MonoBehaviour
 
     MovementPlane movementPlane;
     bool firstClick = false;
+    bool originalPosSet = false;
     int objLayer = 0;
     int planeLayer = 0;
+
+    float moveDistanceLimit = 3;
 
     Vector3 originalPosition;
 
@@ -17,7 +20,11 @@ public class TransformControl : MonoBehaviour
         planeLayer = LayerMask.NameToLayer("MovementPlane");
         transform.gameObject.layer = objLayer;
         movementPlane = Global.MovementPlane;
-        originalPosition = transform.localPosition;
+        if (!originalPosSet && originalPosition != null)
+        {
+            originalPosition = transform.localPosition;
+            originalPosSet = true;
+        }
         if (movementPlane == null)
         {
             Debug.LogWarning("[MovementControl] There is no MovementPlane in the scene.");
@@ -54,7 +61,7 @@ public class TransformControl : MonoBehaviour
             {
                 Vector3 curPosition = hit2.point + offset;
                 curPosition = new Vector3(curPosition.x, transform.position.y, curPosition.z);
-
+                curPosition = ClampVector(curPosition, moveDistanceLimit);
                 transform.position = curPosition;
             }
         } else
@@ -62,6 +69,16 @@ public class TransformControl : MonoBehaviour
             firstClick = false;
             movementPlane.gameObject.SetActive(false);
         }
+    }
+
+    public Vector3 ClampVector(Vector3 input, float distance)
+    {
+        float x = Mathf.Clamp(input.x, originalPosition.x - distance, originalPosition.x + distance);
+        float z = Mathf.Clamp(input.z, originalPosition.z - distance, originalPosition.z + distance);
+        float y = Mathf.Clamp(input.y, originalPosition.y - distance, originalPosition.y + distance);
+        Vector3 output = new Vector3(x, y, z);
+        Debug.Log(output);
+        return output;
     }
 
     public Vector3 GetOriginalPosition()
