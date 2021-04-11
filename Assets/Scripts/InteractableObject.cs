@@ -16,11 +16,11 @@ public class InteractableObject : MonoBehaviour
     List<Material> defaultMats = null;
     Outline objectOutline = null;
 
-
-
     Color originalColor;
     List<Color> originalChildrenColors;
     TransformControl movement;
+    float movementDistanceLimit = 3;
+
     public List<ObjectState> States
     {
         get { return states; }
@@ -278,6 +278,7 @@ public class InteractableObject : MonoBehaviour
 
     public void EnableMovement()
     {
+        movement.moveDistanceLimit = (1 - CurrentState.geometricCertainty) * movementDistanceLimit;
         movement.enabled = true;
     }
 
