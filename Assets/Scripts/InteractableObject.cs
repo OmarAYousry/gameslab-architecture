@@ -36,6 +36,16 @@ public class InteractableObject : MonoBehaviour
         get { return states[currentStateID]; }
     }
 
+    void storeCurrentColors()
+    {
+        originalColor = GetComponent<MeshRenderer>().material.color;
+        originalChildrenColors = new List<Color>();
+        foreach (Transform child in transform)
+        {
+            originalChildrenColors.Add(child.GetComponent<MeshRenderer>().material.color);
+        }
+    }
+
     void Awake()
     {
         objectOutline = GetComponent<Outline>();
@@ -68,12 +78,7 @@ public class InteractableObject : MonoBehaviour
 
     void Start()
     {
-        originalColor = GetComponent<MeshRenderer>().material.color;
-        originalChildrenColors = new List<Color>();
-        foreach (Transform child in transform)
-        {
-            originalChildrenColors.Add(child.GetComponent<MeshRenderer>().material.color);
-        }
+        storeCurrentColors();
     }
 
     void OnEnable()
@@ -190,6 +195,27 @@ public class InteractableObject : MonoBehaviour
     public void SetScale(Vector3 newScale)
     {
         CurrentState.scale = newScale;
+    }
+
+    public void SetMaterial(Material newMat)
+    {
+        states[CurrentStateID].chosenMaterialName = newMat.name;
+        for (int i = 0; i < defaultMats.Count; i++)
+        {
+            defaultMats[i] = newMat;
+        }
+
+        if (!CertaintyMaterialization.isPreviewSemanticCertainty && !CertaintyMaterialization.isPreviewGeometricCertainty)
+        {
+            applyDefaultMats(ignoreOldColors: true);
+            storeCurrentColors();
+            if (currentInteractable == this)
+            {
+                applySelectColors();
+            }
+        }
+
+        UpdateUI();
     }
 
     public void AddComment(string commenter, string comment)
@@ -373,14 +399,15 @@ public class InteractableObject : MonoBehaviour
 
     }
 
-    private void applyDefaultMats()
+    private void applyDefaultMats(bool ignoreOldColors = false)
     {
         MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
         for (int i = 0; i < meshRenderers.Length; i++)
         {
             meshRenderers[i].material = defaultMats[i];
         }
-        applyOriginalColors();
+        if (!ignoreOldColors)
+            applyOriginalColors();
     }
 
     private void applyCertaintyMaterials(Material[] certaintyMats)
@@ -427,6 +454,7 @@ public class ObjectState
     public bool isRated;
     public float semanticCertainty;
     public float geometricCertainty;
+    public string chosenMaterialName;
 
     public static ObjectState GenerateObjectState(Vector3 pos, Quaternion rot, Vector3 scale, List<Comment> comms = null, float rate = 0, bool rated = false, float semantic = 0, float geometric = 0)
     {
@@ -439,6 +467,7 @@ public class ObjectState
         objState.semanticCertainty = semantic;
         objState.geometricCertainty = geometric;
         objState.comments = (comms == null)? new List<Comment>() : comms;
+        objState.chosenMaterialName = string.Empty;
         return objState;
     }
 
@@ -453,6 +482,7 @@ public class ObjectState
         objState.isRated = objectState.isRated;
         objState.semanticCertainty = objectState.semanticCertainty;
         objState.geometricCertainty = objectState.geometricCertainty;
+        objState.chosenMaterialName = objectState.chosenMaterialName;
         return objState;
     }
 

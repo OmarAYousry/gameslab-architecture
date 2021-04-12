@@ -8,6 +8,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainScene.unity
     guid: 4801be0abd2731a4b9db446a47fb6332
+  - enabled: 0
+    path: Assets/Scenes/Test Scenes/TarekScene.unity
+    guid: 00034869e0fcf1f46ad6eb7cc8a0b188
   m_configObjects:
     com.unity.xr.arkit.PlayerSettings: {fileID: 11400000, guid: 2d5fb8e61571b4e3897f221189089fd6,
       type: 2}

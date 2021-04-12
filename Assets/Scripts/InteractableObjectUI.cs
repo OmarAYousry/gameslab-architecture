@@ -32,6 +32,8 @@ public class InteractableObjectUI : MonoBehaviour
     CertaintyUI geometricCertainty;
     [SerializeField]
     RatingUI ratingView;
+    [SerializeField]
+    MaterialsUI materialsView;
 
     [Header("Action Buttons")]
     [SerializeField]
@@ -104,6 +106,7 @@ public class InteractableObjectUI : MonoBehaviour
         semanticCertainty.Visualize(intObj.CurrentState.semanticCertainty, intObj.SetSemanticCertainty);
         geometricCertainty.Visualize(intObj.CurrentState.geometricCertainty, intObj.SetGeometricCertainty);
         ratingView.Visualize(intObj.CurrentState.rating, intObj.SetRating);
+        materialsView.Visualize(intObj.CurrentState.chosenMaterialName, intObj.SetMaterial);
         movementView.Visualize(intObj, intObj.DisableMovementAndSave, intObj.DisableMovementAndCancel);
 
         elementName.text = intObj.name;

@@ -37,6 +37,7 @@ public static class DataPersistence
         XmlSerializer serializer = new XmlSerializer(typeof(List<StatesDictionary>));
 
         string filePath = $"{Application.persistentDataPath}{Path.DirectorySeparatorChar}{BuildingBehaviour.BuildingName}.xml";
+        Debug.Log(filePath);
         FileStream fs = new FileStream(filePath, FileMode.Open);
 
         List<StatesDictionary> allObjectStates = (List<StatesDictionary>) serializer.Deserialize(fs);
