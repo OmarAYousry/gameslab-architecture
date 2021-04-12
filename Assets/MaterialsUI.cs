@@ -12,6 +12,11 @@ public class MaterialsUI : MonoBehaviour
     [SerializeField]
     private bool interactable = false;
 
+    private void Awake()
+    {
+        materialsDropDown.Select();
+    }
+
     public void Visualize(string matName, System.Action<Material> onPickAction = null)
     {
         materialsDropDown.onValueChanged.RemoveAllListeners();
@@ -19,12 +24,10 @@ public class MaterialsUI : MonoBehaviour
         materialsDropDown.onValueChanged.AddListener(new UnityEngine.Events.UnityAction<int>(i => onPickAction(matController.currentlyAssignedMat)));
 
         matController.AssignMaterialIfFound(matName);
-        Debug.LogWarning(matController.currentlyAssignedMat);
-        Debug.LogError(materialsDropDown.value);
-        Debug.LogError(matController.currentlyAssignedMatIndex);
-        materialsDropDown.value = matController.currentlyAssignedMatIndex;
+        int dropDownIndex = Mathf.Max(0, matController.currentlyAssignedMatIndex);
+        materialsDropDown.Select();
+        materialsDropDown.SetValueWithoutNotify(dropDownIndex);
         materialsDropDown.RefreshShownValue();
-        Debug.LogError(materialsDropDown.value);
     }
 
     public void getMaterialNameThenAssign(int matIndex)

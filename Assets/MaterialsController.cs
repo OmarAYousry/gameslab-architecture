@@ -13,18 +13,18 @@ public class MaterialsController : MonoBehaviour
 
     public List<Material> SelectableMaterials { get { return selectableMaterials; } }
 
+    public static MaterialsController instance { get; private set; }
+
     public Material currentlyAssignedMat { get; private set; }
     public int currentlyAssignedMatIndex { get; private set; }
 
     void Awake()
     {
+        instance = this;
         materialsDropDown.ClearOptions();
         currentlyAssignedMat = null;
         currentlyAssignedMatIndex = -1;
-    }
 
-    void Start()
-    {
         List<Dropdown.OptionData> materialNames = new List<Dropdown.OptionData>();
         foreach (Material mat in selectableMaterials)
         {
@@ -39,7 +39,11 @@ public class MaterialsController : MonoBehaviour
     {
         Material selectedMat = selectableMaterials.Find(mat => mat.name == materialName);
         if (selectedMat == null)
+        {
+            currentlyAssignedMat = null;
+            currentlyAssignedMatIndex = -1;
             return;
+        }
         if (selectedMat == currentlyAssignedMat)
             return;
 

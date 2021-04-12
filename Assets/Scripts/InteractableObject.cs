@@ -94,6 +94,12 @@ public class InteractableObject : MonoBehaviour
     public void ResetState()
     {
         UpdateTransformFromState();
+
+        Material matToApply = MaterialsController.instance.SelectableMaterials.Find(mat => mat.name == states[CurrentStateID].chosenMaterialName);
+        if (matToApply == null)
+            matToApply = GetComponent<MeshRenderer>().material;
+        
+        SetMaterial(matToApply);
     }
 
     public void UpdateTransformFromState()
@@ -199,7 +205,10 @@ public class InteractableObject : MonoBehaviour
 
     public void SetMaterial(Material newMat)
     {
-        states[CurrentStateID].chosenMaterialName = newMat.name;
+        // a bit hacky, but needed to resolve instance values
+        // maybe better to put this in the MaterialsController's resolve
+        // i.e. instead of matching exactly, using closest matching algorithm
+        states[CurrentStateID].chosenMaterialName = newMat.name.Replace(" (Instance)", "");
         for (int i = 0; i < defaultMats.Count; i++)
         {
             defaultMats[i] = newMat;
