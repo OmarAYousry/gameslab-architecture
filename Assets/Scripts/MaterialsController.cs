@@ -13,7 +13,7 @@ public class MaterialsController : MonoBehaviour
 
     public List<Material> SelectableMaterials { get { return selectableMaterials; } }
 
-    public static MaterialsController instance { get; private set; }
+    public static MaterialsController instance { get; private set; } = null;
 
     public Material currentlyAssignedMat { get; private set; }
     public int currentlyAssignedMatIndex { get; private set; }
