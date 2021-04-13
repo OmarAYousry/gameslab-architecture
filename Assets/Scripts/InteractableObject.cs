@@ -15,6 +15,7 @@ public class InteractableObject : MonoBehaviour
 
     List<Material> defaultMats = null;
     Outline objectOutline = null;
+    MaterialsController matController = null;
 
     Color originalColor;
     List<Color> originalChildrenColors;
@@ -68,16 +69,16 @@ public class InteractableObject : MonoBehaviour
             currentStateID = 0;
         }
 
-        ResetState();
-
         if (autoSetTag)
             transform.tag = tagName;
 
         movement = GetComponent<TransformControl>();
+        movement.enabled = false;
     }
 
     void Start()
     {
+        ResetState();
         storeCurrentColors();
     }
 
@@ -95,10 +96,11 @@ public class InteractableObject : MonoBehaviour
     {
         UpdateTransformFromState();
 
-        Material matToApply = MaterialsController.instance.SelectableMaterials.Find(mat => mat.name == states[CurrentStateID].chosenMaterialName);
+        matController = InteractableObjectUI.instance.MaterialsController;
+        Material matToApply = matController.SelectableMaterials.Find(mat => mat.name == states[CurrentStateID].chosenMaterialName);
         if (matToApply == null)
             matToApply = GetComponent<MeshRenderer>().material;
-        
+
         SetMaterial(matToApply);
     }
 
@@ -313,6 +315,8 @@ public class InteractableObject : MonoBehaviour
 
     public void EnableMovement()
     {
+        if (movement == null)
+            movement = GetComponent<TransformControl>();
         movement.moveDistanceLimit = (1 - CurrentState.geometricCertainty) * movementDistanceLimit;
         movement.enabled = true;
     }

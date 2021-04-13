@@ -34,6 +34,8 @@ public class InteractableObjectUI : MonoBehaviour
     RatingUI ratingView;
     [SerializeField]
     MaterialsUI materialsView;
+    [SerializeField]
+    MaterialsController materialsController;
 
     [Header("Action Buttons")]
     [SerializeField]
@@ -46,6 +48,11 @@ public class InteractableObjectUI : MonoBehaviour
     Button resetStateButton;
     [SerializeField]
     Button deleteStateButton;
+
+    public MaterialsController MaterialsController
+    {
+        get { return materialsController; }
+    }
 
     void Awake()
     {
