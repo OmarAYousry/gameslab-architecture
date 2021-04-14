@@ -58,6 +58,7 @@ public class InteractableObject : MonoBehaviour
         defaultMats = new List<Material>();
         foreach (MeshRenderer renderer in GetComponentsInChildren<MeshRenderer>())
         {
+            MaterialsController.AddMaterialIfNotExisting(renderer.material);
             defaultMats.Add(renderer.material);
         }
 

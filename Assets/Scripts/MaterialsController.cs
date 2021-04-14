@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +16,17 @@ public class MaterialsController : MonoBehaviour
 
     public Material currentlyAssignedMat { get; private set; }
     public int currentlyAssignedMatIndex { get; private set; }
+
+    public static void AddMaterialIfNotExisting(Material matParam)
+    {
+        if (instance.selectableMaterials.Find(mat => mat.name == matParam.name.Replace(" (Instance)", "")) == null)
+        {
+            Material newSelectableMat = new Material(matParam);
+            newSelectableMat.name = newSelectableMat.name.Replace(" (Instance)", "");
+            instance.selectableMaterials.Add(newSelectableMat);
+            instance.materialsDropDown.AddOptions(new List<Dropdown.OptionData> { new Dropdown.OptionData(newSelectableMat.name) });
+        }
+    }
 
     void Awake()
     {
