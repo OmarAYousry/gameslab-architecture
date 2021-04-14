@@ -11,6 +11,7 @@ public class TransformControl : MonoBehaviour
     int objLayer = 0;
     int planeLayer = 0;
 
+    public bool useLimiter = true;
     public float moveDistanceLimit = 3;
 
     Vector3 originalPosition;
@@ -32,17 +33,20 @@ public class TransformControl : MonoBehaviour
             Debug.LogWarning("[MovementControl] There is no MovementPlane in the scene.");
             enabled = false;
         }
-        if (boundLines == null)
+        if (useLimiter)
         {
-            boundLines = new List<LineRenderer>();
-            for (int i = 0; i < 4; i++)
+            if (boundLines == null)
             {
-                GameObject newGO = Instantiate(new GameObject(), transform);
-                LineRenderer lineRenderer = newGO.AddComponent<LineRenderer>();
-                boundLines.Add(lineRenderer);
+                boundLines = new List<LineRenderer>();
+                for (int i = 0; i < 4; i++)
+                {
+                    GameObject newGO = Instantiate(new GameObject(), transform);
+                    LineRenderer lineRenderer = newGO.AddComponent<LineRenderer>();
+                    boundLines.Add(lineRenderer);
+                }
             }
+            RenderBounds();
         }
-        RenderBounds();
     }
 
     void RenderBounds()
@@ -116,7 +120,8 @@ public class TransformControl : MonoBehaviour
             {
                 Vector3 curPosition = hit2.point + offset;
                 curPosition = new Vector3(curPosition.x, transform.position.y, curPosition.z);
-                curPosition = ClampVector(curPosition, moveDistanceLimit);
+                if (useLimiter)
+                    curPosition = ClampVector(curPosition, moveDistanceLimit);
                 transform.position = curPosition;
             }
         } else
