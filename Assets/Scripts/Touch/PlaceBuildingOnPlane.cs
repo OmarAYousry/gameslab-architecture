@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -32,6 +33,24 @@ public class PlaceBuildingOnPlane : MonoBehaviour
     /// The object instantiated as a result of a successful raycast intersection with a plane.
     /// </summary>
     public GameObject spawnedObject { get; private set; }
+
+#if UNITY_EDITOR
+    void OnValidate()
+    {
+        m_PlacedPrefabs = new List<GameObject>();
+        string[] guids = AssetDatabase.FindAssets(string.Format("t:GameObject"));
+        //string[] guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(GameObject)));
+        for (int i = 0; i < guids.Length; i++)
+        {
+            string assetPath = AssetDatabase.GUIDToAssetPath(guids[i]);
+            BuildingBehaviour asset = AssetDatabase.LoadAssetAtPath<BuildingBehaviour>(assetPath);
+            if (asset != null)
+            {
+                m_PlacedPrefabs.Add(asset.gameObject);
+            }
+        }
+    }
+#endif
 
     void Awake()
     {
