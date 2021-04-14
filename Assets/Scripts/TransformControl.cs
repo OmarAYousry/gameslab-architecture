@@ -23,11 +23,7 @@ public class TransformControl : MonoBehaviour
         planeLayer = LayerMask.NameToLayer("MovementPlane");
         transform.gameObject.layer = objLayer;
         movementPlane = Global.MovementPlane;
-        if (!originalPosSet && originalPosition != null)
-        {
-            originalPosition = transform.localPosition;
-            originalPosSet = true;
-        }
+        originalPosition = transform.localPosition;
         if (movementPlane == null)
         {
             Debug.LogWarning("[MovementControl] There is no MovementPlane in the scene.");
@@ -40,7 +36,7 @@ public class TransformControl : MonoBehaviour
                 boundLines = new List<LineRenderer>();
                 for (int i = 0; i < 4; i++)
                 {
-                    GameObject newGO = Instantiate(new GameObject(), transform);
+                    GameObject newGO = Instantiate(new GameObject());
                     LineRenderer lineRenderer = newGO.AddComponent<LineRenderer>();
                     boundLines.Add(lineRenderer);
                 }
@@ -56,24 +52,23 @@ public class TransformControl : MonoBehaviour
         float width = 0.1f;
 
         Vector3[] vecs1 = new Vector3[2];
-        vecs1[0] = new Vector3(originalPosition.x + (moveDistanceLimit + widthOffset), 0, originalPosition.z + (moveDistanceLimit + depthOffset));
-        vecs1[1] = new Vector3(originalPosition.x - (moveDistanceLimit + widthOffset), 0, originalPosition.z + (moveDistanceLimit + depthOffset));
+        vecs1[0] = new Vector3(originalPosition.x + (moveDistanceLimit + widthOffset), transform.position.y, originalPosition.z + (moveDistanceLimit + depthOffset));
+        vecs1[1] = new Vector3(originalPosition.x - (moveDistanceLimit + widthOffset), transform.position.y, originalPosition.z + (moveDistanceLimit + depthOffset));
         boundLines[0].SetPositions(vecs1);
-        Debug.Log(vecs1[0] + "\n" + vecs1[1]);
 
         Vector3[] vecs2 = new Vector3[2];
-        vecs2[0] = new Vector3(originalPosition.x + (moveDistanceLimit + widthOffset), 0, originalPosition.z - (moveDistanceLimit + depthOffset));
-        vecs2[1] = new Vector3(originalPosition.x - (moveDistanceLimit + widthOffset), 0, originalPosition.z - (moveDistanceLimit + depthOffset));
+        vecs2[0] = new Vector3(originalPosition.x + (moveDistanceLimit + widthOffset), transform.position.y, originalPosition.z - (moveDistanceLimit + depthOffset));
+        vecs2[1] = new Vector3(originalPosition.x - (moveDistanceLimit + widthOffset), transform.position.y, originalPosition.z - (moveDistanceLimit + depthOffset));
         boundLines[1].SetPositions(vecs2);
 
         Vector3[] vecs3 = new Vector3[2];
-        vecs3[0] = new Vector3(originalPosition.x + (moveDistanceLimit + widthOffset), 0, originalPosition.z + (moveDistanceLimit + depthOffset));
-        vecs3[1] = new Vector3(originalPosition.x + (moveDistanceLimit + widthOffset), 0, originalPosition.z - (moveDistanceLimit + depthOffset));
+        vecs3[0] = new Vector3(originalPosition.x + (moveDistanceLimit + widthOffset), transform.position.y, originalPosition.z + (moveDistanceLimit + depthOffset));
+        vecs3[1] = new Vector3(originalPosition.x + (moveDistanceLimit + widthOffset), transform.position.y, originalPosition.z - (moveDistanceLimit + depthOffset));
         boundLines[2].SetPositions(vecs3);
 
         Vector3[] vecs4 = new Vector3[2];
-        vecs4[0] = new Vector3(originalPosition.x - (moveDistanceLimit + widthOffset), 0, originalPosition.z + (moveDistanceLimit + depthOffset));
-        vecs4[1] = new Vector3(originalPosition.x - (moveDistanceLimit + widthOffset), 0, originalPosition.z - (moveDistanceLimit + depthOffset));
+        vecs4[0] = new Vector3(originalPosition.x - (moveDistanceLimit + widthOffset), transform.position.y, originalPosition.z + (moveDistanceLimit + depthOffset));
+        vecs4[1] = new Vector3(originalPosition.x - (moveDistanceLimit + widthOffset), transform.position.y, originalPosition.z - (moveDistanceLimit + depthOffset));
         boundLines[3].SetPositions(vecs4);
 
         foreach (LineRenderer bound in boundLines)
@@ -137,7 +132,7 @@ public class TransformControl : MonoBehaviour
         float z = Mathf.Clamp(input.z, originalPosition.z - distance, originalPosition.z + distance);
         float y = Mathf.Clamp(input.y, originalPosition.y - distance, originalPosition.y + distance);
 
-        Vector3 output = new Vector3(x, y, z);
+        Vector3 output = new Vector3(x, transform.position.y, z);
         return output;
     }
 
