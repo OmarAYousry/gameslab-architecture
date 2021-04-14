@@ -21,7 +21,6 @@ public class BuildingSpawnDialog : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        Debug.LogError("Wake me up lul");
         gameObject.SetActive(false);
     }
 
