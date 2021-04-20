@@ -20,7 +20,7 @@ public class InteractableObject : MonoBehaviour
     Color originalColor;
     List<Color> originalChildrenColors;
     TransformControl movement;
-    float movementDistanceLimit = 3;
+    float movementDistanceLimit = 10;
 
     public List<ObjectState> States
     {
@@ -318,7 +318,7 @@ public class InteractableObject : MonoBehaviour
     {
         if (movement == null)
             movement = GetComponent<TransformControl>();
-        movement.moveDistanceLimit = (1 - CurrentState.geometricCertainty) * movementDistanceLimit;
+        movement.moveDistanceLimit = (1 - CurrentState.geometricCertainty) * movementDistanceLimit / transform.localScale.x;
         movement.enabled = true;
     }
 
